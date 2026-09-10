@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8 md:py-12 select-none">
+    
+    <!-- BOTÓN RETROCEDER -->
+    <div class="mb-8">
+        <a href="{% url 'product_list' %}" 
+           class="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors group">
+            <span class="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
+            <span>Volver al Catálogo</span>
+        </a>
+    </div>
+
+    <!-- DETALLE DEL PRODUCTO (GRID PRINCIPAL) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
+        
+        <!-- Imagen Principal -->
+        <div class="bg-zinc-950 border border-zinc-900 aspect-[3/4] overflow-hidden relative group">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" 
+                     alt="{{ product.name }}" 
+                     class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
+            {% else %}
+                <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">
+                    SIN IMAGEN DISPONIBLE
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Información y Opciones de Compra -->
+        <div class="flex flex-col justify-between space-y-8">
+            <div class="space-y-4">
+                
+                <!-- Categoría & Tag -->
+                <div class="flex items-center space-x-3">
+                    <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-500">
+                        {{ product.category.name|default:"Performance" }}
+                    </span>
+                    <span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+                    <span class="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-400">
+                        DISPONIBLE
+                    </span>
+                </div>
+
+                <!-- Título y Precio -->
+                <h1 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white font-sans">
+                    {{ product.name }}
+                </h1>
+                
+                <div class="flex items-baseline space-x-4">
+                    <p class="text-2xl font-mono text-white font-bold">
+                        ${{ product.price }} <span class="text-xs text-zinc-500 font-normal">USD</span>
+                    </p>
+                </div>
+
+                <!-- Descripción -->
+                <p class="text-xs text-zinc-400 font-sans leading-relaxed pt-2">
+                    {{ product.description }}
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- VARIANTES DE COLOR (SWATCHES) -->
+                {% if color_variants %}
+                <div class="space-y-3 pt-6 border-t border-zinc-900">
+                    <label class="block text-[11px] font-mono uppercase tracking-widest text-zinc-400">
+                        Otras Variantes de Color:
+                    </label>
+                    <div class="flex items-center space-x-3">
+                        <div class="p-0.5 border-2 border-white rounded-full">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="w-7 h-7 rounded-full object-cover">
+                            {% else %}
+                                <span class="block w-7 h-7 bg-zinc-800 rounded-full"></span>
+                            {% endif %}
+                        </div>
+                        
+                        {% for variant in color_variants %}
+                        <a href="{% url 'product_detail' variant.slug %}" 
+                           class="p-0.5 border-2 border-transparent hover:border-zinc-500 rounded-full transition-all"
+                           title="{{ variant.name }}">
+                            {% if variant.image %}
+                                <img src="{{ variant.image.url }}" class="w-7 h-7 rounded-full object-cover opacity-60 hover:opacity-100 transition-opacity">
+                            {% else %}
+                                <span class="block w-7 h-7 bg-zinc-700 rounded-full"></span>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Formulario de Selección de Talla y Carrito -->
+                <form action="{% url 'cart_add' product.id %}" method="POST" class="space-y-6 pt-6 border-t border-zinc-900">
+                    {% csrf_token %}
+                    
+                    <!-- SELECCIÓN DE TALLA (ADAPTADA PARA ACCESORIOS Y PRENDAS) -->
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="text-[11px] font-mono uppercase tracking-widest text-zinc-400">
+                                {% if is_single_size %}Talla única:{% else %}Talla (Athletic Fit):{% endif %}
+                            </label>
+                            
+                            <!-- Guía de Tallas (Oculta para Talla Única / Accesorios) -->
+                            {% if not is_single_size %}
+                            <button type="button" 
+                                    onclick="toggleSizeGuide()" 
+                                    class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-white underline underline-offset-4 transition-colors">
+                                Guía de Tallas 📏
+                            </button>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                            {% if is_single_size %}
+                                <!-- TALLA ÚNICA PARA ACCESORIOS -->
+                                <label class="col-span-3 sm:col-span-3 cursor-default">
+                                    <input type="radio" name="size" value="TU" checked class="hidden">
+                                    <span class="block text-center py-3 text-xs font-mono uppercase border border-white bg-white text-black font-bold tracking-wider">
+                                        TALLA ÚNICA (OS)
+                                    </span>
+                                </label>
+                            {% else %}
+                                <!-- TALLAS DINÁMICAS (PRENDAS) -->
+                                {% for size in sizes %}
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="size" value="{{ size }}" class="peer hidden" {% if forloop.first %}checked{% endif %}>
+                                    <span class="block text-center py-3 text-xs font-mono uppercase border border-zinc-900 bg-zinc-950 text-zinc-400 peer-checked:border-white peer-checked:bg-white peer-checked:text-black peer-checked:font-bold transition-all">
+                                        {{ size }}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Botón Añadir al Carrito -->
+                    <button type="submit" class="w-full bg-white text-black hover:bg-zinc-200 font-mono text-xs uppercase tracking-[0.25em] py-4 font-bold transition-all">
+                        Añadir al Carrito
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE PRODUCTOS SIMILARES / CROSS-SELLING -->
+    {% if related_products %}
+    <section class="border-t border-zinc-900 pt-16">
+        <div class="text-center mb-12 space-y-2">
+            <h2 class="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">
+                Recomendaciones
+            </h2>
+            <p class="font-serif text-2xl uppercase text-white tracking-tight">
+                Completa tu Equipamiento
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for item in related_products %}
+            <a href="{% url 'product_detail' item.slug %}" class="group bg-zinc-950 border border-zinc-900 overflow-hidden block">
+                <div class="aspect-[3/4] bg-zinc-900 overflow-hidden relative">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" 
+                             alt="{{ item.name }}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% endif %}
+                </div>
+                <div class="p-4 flex justify-between items-center border-t border-zinc-900">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
+                        {{ item.name }}
+                    </h3>
+                    <span class="font-mono text-xs text-zinc-400">${{ item.price }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+
+<!-- MODAL GUÍA DE TALLAS -->
+<div id="sizeGuideModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-zinc-950 border border-zinc-800 max-w-2xl w-full p-6 md:p-8 space-y-6 relative shadow-2xl">
+        
+        <button onclick="toggleSizeGuide()" class="absolute top-6 right-6 text-zinc-500 hover:text-white font-mono text-xl transition-colors">
+            ✕
+        </button>
+
+        <div class="space-y-1 border-b border-zinc-900 pb-4">
+            <h3 class="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">
+                Fit & Dimensions
+            </h3>
+            <p class="font-serif text-2xl uppercase text-white tracking-tight">
+                Guía de Tallas VELERO
+            </p>
+        </div>
+
+        <p class="text-xs text-zinc-400 font-sans leading-relaxed">
+            Nuestras prendas cuentan con una silueta <strong class="text-white">Athletic-Fit</strong> estructurada. Para un calce ceñido al cuerpo selecciona tu talla habitual; para un estilo <strong class="text-white">Oversized</strong> de caída suelta, selecciona una talla superior.
+        </p>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono text-xs border-collapse">
+                <thead>
+                    <tr class="border-b border-zinc-800 text-zinc-500 uppercase tracking-widest text-[10px]">
+                        <th class="py-3 px-4">Talla</th>
+                        <th class="py-3 px-4">Pecho (cm)</th>
+                        <th class="py-3 px-4">Cintura (cm)</th>
+                        <th class="py-3 px-4">Largo (cm)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-900 text-zinc-300">
+                    <tr class="hover:bg-zinc-900/50 transition-colors">
+                        <td class="py-3 px-4 font-bold text-white">SM / S</td>
+                        <td class="py-3 px-4">88 - 96</td>
+                        <td class="py-3 px-4">73 - 81</td>
+                        <td class="py-3 px-4">70</td>
+                    </tr>
+                    <tr class="hover:bg-zinc-900/50 transition-colors">
+                        <td class="py-3 px-4 font-bold text-white">M</td>
+                        <td class="py-3 px-4">96 - 104</td>
+                        <td class="py-3 px-4">81 - 89</td>
+                        <td class="py-3 px-4">72</td>
+                    </tr>
+                    <tr class="hover:bg-zinc-900/50 transition-colors">
+                        <td class="py-3 px-4 font-bold text-white">L</td>
+                        <td class="py-3 px-4">104 - 112</td>
+                        <td class="py-3 px-4">89 - 97</td>
+                        <td class="py-3 px-4">74</td>
+                    </tr>
+                    <tr class="hover:bg-zinc-900/50 transition-colors">
+                        <td class="py-3 px-4 font-bold text-white">XL / 2XL</td>
+                        <td class="py-3 px-4">112 - 124</td>
+                        <td class="py-3 px-4">97 - 109</td>
+                        <td class="py-3 px-4">76</td>
+                    </tr>
+                    <tr class="hover:bg-zinc-900/50 transition-colors">
+                        <td class="py-3 px-4 font-bold text-white">3XL</td>
+                        <td class="py-3 px-4">124 - 132</td>
+                        <td class="py-3 px-4">109 - 117</td>
+                        <td class="py-3 px-4">78</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-zinc-900/50 p-4 border border-zinc-900 text-[11px] font-sans text-zinc-400 space-y-1">
+            <span class="font-mono text-white font-bold block uppercase tracking-wider text-[10px]">💡 ¿Cómo medirte?</span>
+            <p>Mide el contorno de tu pecho en la parte más ancha con una cinta métrica horizontal. Mantén la cinta cómoda sin apretar demasiado.</p>
+        </div>
+
+        <button onclick="toggleSizeGuide()" class="w-full bg-zinc-900 hover:bg-white hover:text-black text-white font-mono text-xs uppercase tracking-[0.2em] py-3.5 transition-all border border-zinc-800">
+            Cerrar Guía
+        </button>
+    </div>
+</div>
+
+<script>
+    function toggleSizeGuide() {
+        const modal = document.getElementById('sizeGuideModal');
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+    }
+
+    window.addEventListener('click', function(e) {
+        const modal = document.getElementById('sizeGuideModal');
+        if (e.target === modal) {
+            toggleSizeGuide();
+        }
+    });
+</script>
+{% endblock %}

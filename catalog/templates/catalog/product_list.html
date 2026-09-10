@@ -1,0 +1,526 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO / PORTADA PRINCIPAL -->
+<section class="relative w-full h-screen overflow-hidden bg-zinc-950 text-white select-none">
+    
+    <!-- Imagen de fondo principal -->
+    <img src="{% static 'img/collections/portada.jpg' %}" 
+         alt="VELERO Editorial" 
+         class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-90">
+
+    <!-- Overlay gradiente sutil para legibilidad de textos -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 z-10"></div>
+
+    <!-- Encabezado / Navegación Transparente -->
+    <header class="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-8 py-6 text-xs font-mono tracking-widest uppercase">
+        <!-- Menú Izquierda -->
+        <!-- <nav class="hidden md:flex space-x-6 text-zinc-200">
+            <a href="#colecciones" class="hover:text-white transition-colors">Colecciones</a>
+            <a href="?category=hombre#catalogo" class="hover:text-white transition-colors">Hombre</a>
+            <a href="?category=women#catalogo" class="hover:text-white transition-colors">Mujer</a>
+            <a href="?category=accesorios#catalogo" class="hover:text-white transition-colors">Accesorios</a>
+        </nav> -->
+
+        <!-- Marca Central -->
+        <a href="{% url 'product_list' %}" class="text-2xl font-black tracking-[0.3em] font-sans text-white mx-auto md:mx-0">
+            VELERO
+        </a>
+
+        <!-- Menú Derecha / Carrito -->
+        <div class="hidden md:flex items-center space-x-6 text-zinc-200">
+            <a href="{% url 'cart_detail' %}" class="hover:text-white transition-colors font-bold">
+                Carrito
+            </a>
+        </div>
+    </header>
+
+    <!-- Imagen / Logo Central Gigante -->
+    <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-4">
+        <img src="{% static 'img/collections/vlro transparent blanco.png' %} " 
+             alt="VELERO Titular" 
+             class="w-full max-w-lg md:max-w-2xl h-auto object-contain drop-shadow-2xl">
+    </div>
+
+    <!-- Bloque Editorial Inferior Izquierdo -->
+    <div class="absolute bottom-12 left-8 md:left-16 z-20 max-w-xs space-y-4">
+        <span class="font-serif text-3xl md:text-4xl text-white font-normal block tracking-tight">
+            Navegamos
+        </span>
+        <p class="text-xs font-sans font-light text-zinc-300 leading-relaxed tracking-wide">
+            Descubre nuestra colección de prendas técnicas y minimalistas, diseñadas para un estilo de vida activo y urbano. Cada pieza combina funcionalidad, durabilidad y estética contemporánea.
+        </p>
+        <a href="#catalogo" class="inline-block text-xs font-mono uppercase tracking-[0.2em] text-white border-b border-white pb-1 hover:text-zinc-300 hover:border-zinc-300 transition-all pointer-events-auto">
+            Ver Productos
+        </a>
+    </div>
+
+    <!-- Indicador Tasa BCV (Esquina Inferior Derecha) -->
+    <div class="absolute bottom-12 right-8 md:right-16 z-20 hidden sm:block text-right">
+        <p class="text-[10px] font-mono uppercase tracking-widest text-zinc-300">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-ping"></span>
+            BCV: {{ bcv_rate }} VES
+        </p>
+    </div>
+
+</section>
+
+<!-- SECCIÓN DE COLECCIONES -->
+<section id="colecciones" class="py-16 bg-zinc-950/50 border-b border-zinc-900">
+    <div class="max-w-7xl mx-auto px-6 mb-8 text-center">
+        <h2 class="text-3xl font-black uppercase tracking-tight text-white">Nuestras Colecciones</h2>
+        <div class="w-12 h-0.5 bg-zinc-700 mx-auto mt-2"></div>
+    </div>
+
+    <!-- Carrusel Horizontal Deslizable -->
+    <div class="flex overflow-x-auto gap-4 px-6 pb-6 no-scrollbar snap-x snap-mandatory max-w-7xl mx-auto">
+        
+        <!-- Tarjeta 1: Recién Agregados -->
+        <a href="?category=recien-agregados#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-800 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/portada-morro.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <span class="bg-red-600 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest block w-max mb-2">VLRO | NEW</span>
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Recién Agregados</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 2: Promociones -->
+        <a href="?category=promociones#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/pesada verde2.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <span class="bg-lime-400 text-black text-[10px] font-bold px-3 py-1 uppercase tracking-widest block w-max mb-2">VLRO | PROMOTION</span>
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Nuestras Promociones</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 3: Gift Cards -->
+        <a href="{% url 'gift_cards' %}" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/gift_card_velero.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <span class="bg-red-600 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest block w-max mb-2">VLRO | GIFT CARD</span>
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Tarjetas de Regalo</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 4: Accesorios -->
+        <a href="?category=accesorios#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/gorras blanco y negro.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">VLRO | Accesorios</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 5: Women -->
+        <a href="?category=women#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/hoddie celeste.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">VLRO | Women</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 6: Sudaderas -->
+        <a href="?category=sudaderas#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/sudadera-azul.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Sudaderas</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 7: Oversized -->
+        <a href="?category=oversized#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/oversize marron nueva.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Oversized</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 8: T-shirts -->
+        <a href="?category=t-shirts#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/t-shirt basica vinotinto2.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">T-shirts</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 9: Semi-Oversized -->
+        <a href="?category=semi-oversized#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/pesada gris.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Semi-Oversized</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 10: Windbreakers -->
+        <a href="?category=windbreakers#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/windbreaker-negro-nuevo.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Windbreakers</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 11: Acid-wash -->
+        <a href="?category=acid-wash#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/acid-wash-vinotinto.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Acid-wash</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 12: Hoodies -->
+        <a href="?category=hoodie#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/hoddie coleccion.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Hoodies</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 13: Jacket -->
+        <a href="?category=jacket#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/jacket model red.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Jacket</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 14: Shorts -->
+        <a href="?category=shorts#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/short collecion.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Shorts</p>
+            </div>
+        </a>
+
+        <!-- Tarjeta 15: Joggers -->
+        <a href="?category=joggers#catalogo" class="flex-none w-64 h-96 relative rounded-2xl overflow-hidden border border-zinc-800 group snap-start">
+            <div class="absolute inset-0 bg-zinc-900 bg-cover bg-center group-hover:scale-105 transition duration-500" 
+                 style="background-image: url('{% static "img/collections/jogger beige2.jpg" %}');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-white">Joggers</p>
+            </div>
+        </a>
+
+    </div>
+</section>
+
+<!-- CATÁLOGO GENERAL CON BARRA DE FILTROS -->
+<section id="catalogo" class="py-16 max-w-7xl mx-auto px-6">
+    
+    <!-- Encabezado y Formulario Completo de Filtros -->
+    <div class="mb-10 space-y-6 border-b border-zinc-900 pb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div>
+                <h2 class="text-2xl font-black uppercase tracking-tight text-white">Catálogo de Productos</h2>
+                <p class="text-xs font-mono text-zinc-500 uppercase tracking-widest mt-1">Filtrar por colección y preferencias</p>
+            </div>
+            
+            {% if selected_category or query or min_price or max_price or sort %}
+                <a href="{% url 'product_list' %}#catalogo" class="text-xs text-red-500 hover:text-red-400 underline uppercase tracking-wider font-semibold transition-colors">
+                    ✕ Limpiar Todos los Filtros
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Formulario dinámico de Búsqueda y Filtros -->
+        <form method="GET" action="{% url 'product_list' %}#catalogo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Buscador por Texto -->
+            <div>
+                <label for="search_input" class="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Buscar</label>
+                <input id="search_input" type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar productos..." class="w-full bg-zinc-950 border border-zinc-800 text-white font-mono text-xs p-3 focus:border-white focus:outline-none transition-colors">
+            </div>
+
+            <!-- Selección de Categoría -->
+            <div>
+                <label for="category_select" class="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Colección</label>
+                <select id="category_select" name="category" onchange="this.form.submit()" class="w-full bg-zinc-950 border border-zinc-800 text-white font-mono text-xs p-3 focus:border-white focus:outline-none transition-colors">
+                    <option value="all" {% if not selected_category or selected_category == 'all' %}selected{% endif %}>
+                        Todas las Colecciones
+                    </option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Ordenamiento -->
+            <div>
+                <label for="sort_select" class="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Ordenar Por</label>
+                <select id="sort_select" name="sort" onchange="this.form.submit()" class="w-full bg-zinc-950 border border-zinc-800 text-white font-mono text-xs p-3 focus:border-white focus:outline-none transition-colors">
+                    <option value="recent" {% if sort == 'recent' or not sort %}selected{% endif %}>Más Recientes</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Precio: Menor a Mayor</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Precio: Mayor a Menor</option>
+                </select>
+            </div>
+
+            <!-- Botón Aplicar -->
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-white text-black font-mono text-xs font-bold uppercase tracking-widest py-3 px-6 hover:bg-zinc-200 transition-colors">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grid de Productos -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in products %}
+        <div class="group bg-zinc-950 border border-zinc-900 rounded-lg overflow-hidden flex flex-col justify-between hover:border-zinc-700 transition-colors">
+            
+            <!-- Imagen y Detalle del Producto -->
+            <div>
+                {% if product.slug %}
+                    <a href="{% url 'product_detail' product.slug %}" class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">SIN IMAGEN</div>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <div class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative opacity-50">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <div class="p-4">
+                    {% if product.slug %}
+                        <a href="{% url 'product_detail' product.slug %}" class="block hover:underline">
+                            <h3 class="font-bold uppercase tracking-wider text-xs text-white">{{ product.name }}</h3>
+                        </a>
+                    {% else %}
+                        <h3 class="font-bold uppercase tracking-wider text-xs text-white">{{ product.name }}</h3>
+                    {% endif %}
+                    <p class="text-[11px] text-zinc-500 mt-1 line-clamp-2">{{ product.description }}</p>
+                </div>
+            </div>
+
+            <!-- Acciones de Carrito -->
+            <div class="p-4 pt-0">
+                {% if product.pk %}
+                <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
+                    {% csrf_token %}
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="font-mono text-sm font-bold text-white">${{ product.price }}</span>
+                            {% if product.price_bs %}
+                                <span class="block text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
+                            {% endif %}
+                        </div>
+                        
+                        <select name="size" class="bg-black border border-zinc-800 text-[11px] text-zinc-300 px-2 py-1 focus:outline-none focus:border-zinc-500">
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-white text-black py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
+                        + Añadir al Carrito
+                    </button>
+                </form>
+                {% else %}
+                <div class="mt-2 pt-3 border-t border-zinc-900">
+                    <span class="text-[10px] font-mono text-red-500 uppercase">Producto no disponible</span>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-24 border border-dashed border-zinc-900 rounded-lg">
+            <p class="text-zinc-500 text-xs uppercase tracking-widest">No se encontraron productos con los criterios seleccionados.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación estilizada -->
+    {% if products.has_other_pages %}
+    <div class="mt-12 flex justify-center items-center space-x-2 font-mono text-xs">
+        {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}#catalogo" class="px-3 py-2 bg-zinc-900 text-white border border-zinc-800 hover:bg-white hover:text-black transition">
+                &laquo; Anterior
+            </a>
+        {% endif %}
+
+        <span class="px-4 py-2 bg-zinc-950 text-zinc-400 border border-zinc-900">
+            Página {{ products.number }} de {{ products.paginator.num_pages }}
+        </span>
+
+        {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}#catalogo" class="px-3 py-2 bg-zinc-900 text-white border border-zinc-800 hover:bg-white hover:text-black transition">
+                Siguiente &raquo;
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</section>
+
+<!-- HERO / PORTADA ESTILO ASRV -->
+<section class="relative w-full h-screen overflow-hidden bg-zinc-950 text-white select-none">
+    <img src="{% static 'img/collections/banner.jpg' %}" 
+         alt="VELERO Apparel" 
+         class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-80">
+
+    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30 z-10"></div>
+
+    <div class="absolute bottom-16 left-8 md:left-16 z-20 max-w-2xl space-y-6">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-4xl md:text-6xl font-black italic tracking-tighter uppercase font-sans text-white">
+                VELERO
+            </h1>
+
+            <div class="w-[3px] h-8 md:h-12 bg-blue-600"></div>
+
+            <span class="text-4xl md:text-6xl font-extrabold tracking-tight uppercase font-sans text-white">
+                FALL'26
+            </span>
+        </div>
+
+        <p class="text-[11px] md:text-xs font-mono uppercase tracking-widest text-zinc-300 font-semibold leading-relaxed max-w-xl">
+            NUEVA TECNOLOGÍA DE TEJIDO SIN COSTURAS Y SILUETAS QUE REALZAN LA FIGURA CON EL PASO DEL TIEMPO.
+        </p>
+
+        <div>
+            <a href="#colecciones" 
+               class="inline-block border border-white hover:bg-white hover:text-black text-white font-mono text-xs uppercase tracking-[0.25em] px-8 py-3.5 transition-all duration-300">
+                COMPRAR AHORA
+            </a>
+        </div>
+    </div>
+
+    <!-- Banner Flotante Promocional -->
+    <div id="promo-badge" class="fixed bottom-6 left-6 z-40 bg-white text-black p-4 shadow-2xl border border-zinc-200 max-w-[180px] transition-all">
+        <button onclick="document.getElementById('promo-badge').remove()" 
+                class="absolute -top-3 -right-3 bg-black text-white w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold border border-white hover:bg-zinc-800">
+            ✕
+        </button>
+        <p class="text-center font-black uppercase text-xs leading-tight tracking-tight">
+            OBTÉN UN 10% DE DESCUENTO
+        </p>
+    </div>
+
+    <!-- Botón Flotante Chat / WhatsApp -->
+    <a href="https://wa.me/584121143302" 
+       target="_blank"
+       rel="noopener noreferrer"
+       class="fixed bottom-6 right-6 z-40 bg-white text-black w-12 h-12 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+        </svg>
+    </a>
+</section>
+
+<!-- SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) -->
+<section class="bg-black text-white py-20 border-t border-zinc-900 select-none">
+    <div class="max-w-4xl mx-auto px-6">
+        
+        <div class="text-center mb-16 space-y-3">
+            <h2 class="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">
+                Atención al Cliente
+            </h2>
+            <p class="font-serif text-3xl md:text-4xl text-white tracking-tight uppercase">
+                Preguntas Frecuentes
+            </p>
+            <div class="w-12 h-[1px] bg-zinc-800 mx-auto mt-4"></div>
+        </div>
+
+        <div class="space-y-4 font-sans">
+
+            <!-- Item 1: Envíos -->
+            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
+                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
+                    <span>¿Cómo funcionan los envíos a nivel nacional?</span>
+                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
+                </summary>
+                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
+                    Realizamos envíos cobro en destino a toda Venezuela a través de Zoom, MRW y Tealca. Los pedidos procesados antes de las 2:00 PM son despachados el mismo día hábil.
+                </div>
+            </details>
+
+            <!-- Item 2: Tasa y Moneda -->
+            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
+                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
+                    <span>¿A qué tasa de cambio se calcula el pago en Bolívares?</span>
+                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
+                </summary>
+                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
+                    Todos nuestros precios expresados en USD se convierten automáticamente en tiempo real utilizando la tasa oficial del Banco Central de Venezuela (BCV) del día.
+                </div>
+            </details>
+
+            <!-- Item 3: Métodos de Pago -->
+            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
+                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
+                    <span>¿Cuáles son los métodos de pago aceptados?</span>
+                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
+                </summary>
+                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
+                    Aceptamos Pago Móvil y Transferencias Bancarias nacionales (calculados a Tasa BCV), así como Binance Pay, Zinli y USDT para pagos en divisas electrónicas.
+                </div>
+            </details>
+
+            <!-- Item 4: Tallas y Ajuste -->
+            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
+                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
+                    <span>¿Cómo sé cuál es mi talla ideal?</span>
+                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
+                </summary>
+                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
+                    Nuestras prendas cuentan con una silueta <em>Athletic-Fit</em> estructurada. Te recomendamos seleccionar tu talla habitual si buscas un ajuste atlético al cuerpo, o una talla superior si prefieres un estilo <em>oversized</em>.
+                </div>
+            </details>
+
+            <!-- Item 5: Pedidos vía WhatsApp -->
+            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
+                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
+                    <span>¿Cómo se procesa la compra por WhatsApp?</span>
+                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
+                </summary>
+                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
+                    Al completar tu carrito y presionar "Completar Pedido vía WhatsApp", se generará automáticamente un mensaje con la lista detallada de tus productos, la talla, la tasa BCV y el monto total para confirmación inmediata con un asesor.
+                </div>
+            </details>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

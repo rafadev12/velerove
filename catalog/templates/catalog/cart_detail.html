@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12 select-none">
+    <h1 class="text-3xl font-black uppercase text-white font-sans tracking-wider mb-8">
+        Carrito de Compras
+    </h1>
+
+    {% if cart %}
+    <!-- VISTA CUANDO HAY PRODUCTOS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        <!-- Lista de Productos -->
+        <div class="lg:col-span-2 space-y-4">
+            {% for item_id, item in cart.items %}
+            <div class="bg-zinc-950 border border-zinc-900 p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    {% if item.image %}
+                        <img src="{{ item.image }}" alt="{{ item.name }}" class="w-16 h-20 object-cover">
+                    {% endif %}
+                    <div>
+                        <h3 class="text-white text-sm font-bold uppercase">{{ item.name }}</h3>
+                        <p class="text-xs text-zinc-500 font-mono">Talla: {{ item.size }}</p>
+                        <p class="text-xs text-zinc-400 font-mono">${{ item.price }} x {{ item.quantity }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'cart_remove' item_id %}" class="text-xs text-red-500 hover:text-red-400 font-mono transition-colors">
+                    Eliminar
+                </a>
+            </div>
+            {% endfor %}
+
+            <div class="pt-4">
+                <a href="{% url 'product_list' %}" class="text-xs font-mono uppercase text-zinc-400 hover:text-white">
+                    ← Continuar Comprando
+                </a>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Resumen -->
+        <div class="bg-zinc-950 border border-zinc-900 p-6 space-y-6 h-fit">
+            <h2 class="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 border-b border-zinc-900 pb-3">
+                Resumen del Pedido
+            </h2>
+
+            <div class="space-y-3 font-mono text-xs">
+                <div class="flex justify-between text-emerald-400">
+                    <span>Tasa BCV Oficial:</span>
+                    <span class="font-bold">{{ bcv_rate|floatformat:2 }} Bs/USD</span>
+                </div>
+                <div class="flex justify-between text-zinc-300">
+                    <span>Subtotal USD:</span>
+                    <span class="font-bold">${{ subtotal_usd|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between text-white text-sm pt-3 border-t border-zinc-900 font-bold">
+                    <span>Total estimado VES:</span>
+                    <span class="text-emerald-400">{{ total_ves|floatformat:2 }} Bs</span>
+                </div>
+            </div>
+
+            <a href="{% url 'checkout' %}" class="block text-center bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs uppercase tracking-widest py-3.5 font-bold transition-all">
+                Completar Pedido Vía WhatsApp
+            </a>
+            <p class="text-[10px] text-zinc-500 text-center font-mono uppercase tracking-wider">
+                Procesamiento directo e inmediato
+            </p>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- VISTA CARRITO VACÍO -->
+    <div class="bg-zinc-950 border border-zinc-900 p-12 text-center space-y-6 max-w-xl mx-auto my-12">
+        <p class="text-zinc-500 font-mono text-xs uppercase tracking-widest">
+            Tu bolsa de compras está vacía
+        </p>
+        <h2 class="text-xl font-sans uppercase text-white font-bold">
+            No has añadido productos aún
+        </h2>
+        <a href="{% url 'product_list' %}" class="inline-block bg-white text-black hover:bg-zinc-200 font-mono text-xs uppercase tracking-[0.2em] px-8 py-4 font-bold transition-all">
+            Explorar Catálogo
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --card-bg: #09090b;
+        --border-color: #27272a;
+        --text-muted: #a1a1aa;
+    }
+
+    body {
+        background-color: #000000;
+        color: #ffffff;
+    }
+
+    /* Contenedor Principal */
+    .gift-card-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 32px;
+        max-width: 900px;
+        width: 100%;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .gift-card-section {
+            grid-template-columns: 1fr;
+            padding: 24px;
+            padding-top: 60px;
+        }
+    }
+
+    /* Botón Volver */
+    .btn-back {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .btn-back:hover {
+        background: #ffffff;
+        color: #000000;
+        border-color: #ffffff;
+    }
+
+    .btn-back svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+    }
+
+    /* Visualizador de Tarjeta */
+    .card-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-image-wrapper {
+        width: 100%;
+        max-width: 360px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: transform 0.4s ease;
+        background-color: #000000;
+    }
+
+    .card-image-wrapper:hover {
+        transform: translateY(-4px);
+    }
+
+    .card-image-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+    }
+
+    /* Formulario */
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .price-display {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Opciones de Montos */
+    .amount-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .amount-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: #a1a1aa;
+        padding: 12px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    .amount-btn:hover {
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .amount-btn.active {
+        border-color: #ffffff;
+        background: #ffffff;
+        color: #000000;
+        font-weight: 700;
+    }
+
+    /* Inputs de Usuario */
+    .input-group {
+        margin-bottom: 16px;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px;
+        background: #000000;
+        border: 1px solid var(--border-color);
+        color: #ffffff;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.85rem;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    .input-group input:focus {
+        border-color: #ffffff;
+    }
+
+    /* Botón Canjear */
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        background: #ffffff;
+        color: #000000;
+        border: none;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background: #e4e4e7;
+    }
+</style>
+
+<div class="max-w-7xl mx-auto px-6 py-12 select-none">
+    <section class="gift-card-section">
+
+        <!-- Botón de Regresar -->
+        <a href="{% url 'product_list' %}" class="btn-back" title="Volver al Catálogo">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </a>
+
+        <!-- Previsualizador de Imagen -->
+        <div class="card-preview">
+            <div class="card-image-wrapper">
+                <img src="{% static 'img/collections/gift_card_velero.jpg' %}" 
+                     alt="Gift Card Velero 3D"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/09090b/ffffff?text=VELERO+GIFT+CARD';">
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="form-container">
+            <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-500 mb-1">E-CARD ACCESO</span>
+            <h2 class="text-2xl font-black uppercase text-white font-sans tracking-tight mb-2">
+                GIFT CARD VELERO
+            </h2>
+            
+            <div class="price-display" id="selected-price">$45.00</div>
+
+            <label>Monto Seleccionado (USD)</label>
+            <div class="amount-grid">
+                <button type="button" class="amount-btn active" onclick="selectAmount(45)">$45</button>
+                <button type="button" class="amount-btn" onclick="selectAmount(90)">$90</button>
+                <button type="button" class="amount-btn" onclick="selectAmount(100)">$100</button>
+                <button type="button" class="amount-btn" onclick="selectAmount(150)">$150</button>
+                <button type="button" class="amount-btn" onclick="selectAmount(200)">$200</button>
+            </div>
+
+            <div class="input-group">
+                <label for="nombre">Nombre Completo de quien canjeará</label>
+                <input type="text" id="nombre" placeholder="EJ. JUAN PÉREZ" required>
+            </div>
+
+            <div class="input-group">
+                <label for="cedula">Cédula / Documento de Identidad</label>
+                <input type="text" id="cedula" placeholder="EJ. V-12345678" required>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="sendToWhatsApp()">
+                SOLICITAR TARJETA VÍA WHATSAPP 📱
+            </button>
+        </div>
+    </section>
+</div>
+
+<script>
+    let selectedAmount = 45;
+
+    function selectAmount(amount) {
+        selectedAmount = amount;
+        document.getElementById('selected-price').innerText = `$${amount}.00`;
+        
+        const buttons = document.querySelectorAll('.amount-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.innerText === `$${amount}`) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    function sendToWhatsApp() {
+        const nombre = document.getElementById('nombre').value.trim();
+        const cedula = document.getElementById('cedula').value.trim();
+        const phone = "584121143302";
+
+        if (!nombre || !cedula) {
+            alert("Por favor completa el nombre y documento de identidad para continuar.");
+            return;
+        }
+
+        const message = `Hola VELERO, quiero solicitar una *Gift Card VELERO*%0A%0A` +
+                        `*Nombre:* ${encodeURIComponent(nombre)}%0A` +
+                        `*Cédula:* ${encodeURIComponent(cedula)}%0A` +
+                        `*Monto:* $${selectedAmount}.00 USD`;
+
+        const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+    }
+</script>
+{% endblock %}

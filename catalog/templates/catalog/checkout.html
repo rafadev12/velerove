@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-12 select-none">
+    
+    <!-- Botón Volver -->
+    <div class="mb-8">
+        <a href="{% url 'cart_detail' %}" class="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">
+            <span>← Volver a la Bolsa</span>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Lista Detallada de Prendas y Cuentas -->
+        <div class="bg-zinc-950 border border-zinc-900 p-6 md:p-8 space-y-6">
+            <div class="border-b border-zinc-900 pb-4">
+                <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-500">Paso Final</span>
+                <h1 class="text-xl font-bold uppercase text-white font-sans mt-1">Resumen del Pedido</h1>
+            </div>
+
+            <!-- Listado de Artículos -->
+            <div class="space-y-4 max-h-60 overflow-y-auto pr-2 border-b border-zinc-900 pb-6">
+                {% for item_id, item in cart.items %}
+                <div class="flex justify-between items-start font-mono text-xs">
+                    <div>
+                        <p class="text-white font-bold uppercase">{{ item.name }}</p>
+                        <p class="text-zinc-500 text-[10px] uppercase">
+                            Talla: {% if item.size == 'TU' %}Talla Única{% else %}{{ item.size }}{% endif %} | Cant: {{ item.quantity }}
+                        </p>
+                    </div>
+                    <span class="text-zinc-300 font-bold">${{ item.price }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Desglose de Montos -->
+            <div class="space-y-3 font-mono text-xs border-b border-zinc-900 pb-6">
+                <div class="flex justify-between text-zinc-400">
+                    <span>Subtotal USD:</span>
+                    <span class="text-white font-bold">${{ subtotal_usd|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between text-emerald-400">
+                    <span>Tasa BCV Oficial:</span>
+                    <span>{{ bcv_rate|floatformat:2 }} Bs/USD</span>
+                </div>
+                <div class="flex justify-between text-white text-base font-bold pt-2">
+                    <span>Total a Transferir (VES):</span>
+                    <span class="text-emerald-400">{{ total_ves|floatformat:2 }} Bs</span>
+                </div>
+            </div>
+
+            <!-- Datos de Pago Móvil -->
+            <div class="bg-zinc-900/50 p-4 border border-zinc-900 space-y-2 font-mono text-xs">
+                <span class="text-[10px] text-zinc-500 uppercase tracking-widest block font-bold">Cuentas para Pago Móvil</span>
+                <div class="text-zinc-300 space-y-1 pt-1">
+                    <p><strong class="text-zinc-400">Banco:</strong> Banesco (0134)</p>
+                    <p><strong class="text-zinc-400">Teléfono:</strong> 0412-1143302</p>
+                    <p><strong class="text-zinc-400">C.I. / RIF:</strong> J-500000000</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmación y Envío a WhatsApp -->
+        <div class="bg-zinc-950 border border-zinc-900 p-6 md:p-8 flex flex-col justify-between space-y-6">
+            <div class="space-y-4">
+                <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-emerald-400">Atención Personalizada</span>
+                <h2 class="text-lg font-bold uppercase text-white">Enviar Pedido por WhatsApp</h2>
+                <p class="text-xs text-zinc-400 font-sans leading-relaxed">
+                    Al hacer clic en el botón, se abrirá WhatsApp con el mensaje estructurado de tu pedido (artículos, tallas, cantidades y montos exactos en USD y Bs) listo para ser enviado.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <a href="{{ whatsapp_url }}" 
+                   target="_blank"
+                   class="block text-center bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs uppercase tracking-[0.2em] py-4 font-bold transition-all">
+                    Enviar Orden a WhatsApp 📱
+                </a>
+                <p class="text-[10px] text-center font-mono text-zinc-600 uppercase">
+                    VELERO — High Performance Apparel
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-12 select-none">
+    
+    <!-- Botón Volver -->
+    <div class="mb-8">
+        <a href="{% url 'product_list' %}" class="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">
+            <span>← Volver al Catálogo</span>
+        </a>
+    </div>
+
+    <div class="bg-zinc-950 border border-zinc-900 p-8 md:p-12 space-y-8">
+        <!-- Encabezado -->
+        <div class="border-b border-zinc-900 pb-6">
+            <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-500">Gestión de Inventario</span>
+            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white font-sans mt-1">
+                {{ title|default:"Agregar Nuevo Producto" }}
+            </h1>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nombre del Producto -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Nombre del Producto</label>
+                    {{ form.name }}
+                </div>
+
+                <!-- Slug -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Slug (URL)</label>
+                    {{ form.slug }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Categoría -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Categoría</label>
+                    {{ form.category }}
+                </div>
+
+                <!-- Precio -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Precio (USD $)</label>
+                    {{ form.price }}
+                </div>
+
+                <!-- Stock -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Unidades en Stock</label>
+                    {{ form.stock }}
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="space-y-2">
+                <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Descripción Técnica</label>
+                {{ form.description }}
+            </div>
+
+            <!-- Imagen -->
+            <div class="space-y-2">
+                <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">Imagen Principal</label>
+                {{ form.image }}
+            </div>
+
+            <!-- SECCIÓN DE SELECCIÓN DE TALLAS DISPONIBLES -->
+            <div class="space-y-3 pt-6 border-t border-zinc-900">
+                <label class="block text-xs font-mono uppercase tracking-widest text-zinc-400">
+                    Selecciona las Tallas Disponibles:
+                </label>
+                <p class="text-[11px] text-zinc-500 font-sans">
+                    Marca únicamente las tallas que deseas que aparezcan como opción de compra para este producto.
+                </p>
+
+                <div class="grid grid-cols-4 sm:grid-cols-7 gap-3 pt-2">
+                    {% for widget in form.sizes %}
+                    <label class="cursor-pointer">
+                        {{ widget.tag }}
+                        <span class="block text-center py-3 text-xs font-mono uppercase border border-zinc-900 bg-zinc-900/50 text-zinc-400 peer-checked:border-white peer-checked:bg-white peer-checked:text-black peer-checked:font-bold transition-all">
+                            {{ widget.choice_label }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Botón Guardar -->
+            <div class="pt-8 border-t border-zinc-900">
+                <button type="submit" class="w-full bg-white text-black hover:bg-zinc-200 font-mono text-xs uppercase tracking-[0.25em] py-4 font-bold transition-all">
+                    Guardar Producto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

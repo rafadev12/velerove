@@ -1,0 +1,1 @@
+web: gunicorn velero_store.wsgi:application
