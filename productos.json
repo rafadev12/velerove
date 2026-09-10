@@ -1,4 +1,4 @@
-﻿[
+[
 {
   "model": "catalog.product",
   "pk": 4,
@@ -326,7 +326,7 @@
     "name": "Tank Top White",
     "slug": "tank-top-white",
     "category": 8,
-    "description": "Tejido: Algod¾n Pima peruano",
+    "description": "Tejido: Algodón Pima peruano",
     "price": "35.00",
     "stock": 10,
     "is_active": true,
@@ -342,7 +342,7 @@
     "name": "Tank Top Black",
     "slug": "tank-top-black",
     "category": 8,
-    "description": "Tejido: Algod¾n Pima peruano",
+    "description": "Tejido: Algodón Pima peruano",
     "price": "35.00",
     "stock": 10,
     "is_active": true,
@@ -358,7 +358,7 @@
     "name": "Tank Top Grey",
     "slug": "tank-top-grey",
     "category": 8,
-    "description": "Tejido: Algod¾n Pima peruano",
+    "description": "Tejido: Algodón Pima peruano",
     "price": "35.00",
     "stock": 10,
     "is_active": true,
@@ -374,7 +374,7 @@
     "name": "Velero Duna",
     "slug": "velero-duna",
     "category": 9,
-    "description": "TEJIDO: 90% algod¾n, 10% poliÚster",
+    "description": "TEJIDO: 90% algodón, 10% poliéster",
     "price": "50.00",
     "stock": 10,
     "is_active": true,
@@ -390,7 +390,7 @@
     "name": "Velero Horizon",
     "slug": "velero-horizon",
     "category": 9,
-    "description": "TEJIDO: 90% algod¾n, 10% poliÚster",
+    "description": "TEJIDO: 90% algodón, 10% poliéster",
     "price": "50.00",
     "stock": 10,
     "is_active": true,
@@ -683,7 +683,7 @@
   "model": "catalog.category",
   "pk": 2,
   "fields": {
-    "name": "ReciÚn Agregados",
+    "name": "Recién Agregados",
     "slug": "recien-agregados"
   }
 },
