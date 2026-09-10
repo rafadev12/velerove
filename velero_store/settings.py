@@ -53,15 +53,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Configuración de WhiteNoise para archivos estáticos
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <-- Agregar justo debajo de SecurityMiddleware
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    # ... los demás middlewares ...
-]
-
 ROOT_URLCONF = 'velero_store.urls'
 
 TEMPLATES = [
