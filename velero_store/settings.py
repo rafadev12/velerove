@@ -9,7 +9,19 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tu-clave-local-de-des
 # DEBUG es True en local y False en Render
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'velerove.com',
+    'www.velerove.com',
+    'velerove.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://velerove.com',
+    'https://www.velerove.com',
+    'https://velerove.onrender.com',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
