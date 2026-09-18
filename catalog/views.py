@@ -6,19 +6,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-
-from .models import Product, Category, Subscriber, get_bcv_rate
-from .forms import ProductForm
-
 from django.core.cache import cache
 
-def get_bcv_rate_cached():
-    rate = cache.get('bcv_rate')
-    if not rate:
-        # Aquí va la función que consulta la tasa o scraping
-        rate = fetch_bcv_rate_from_api() # O tu función get_bcv_rate()
-        cache.set('bcv_rate', rate, 3600)  # Guarda la tasa en caché por 1 hora (3600 seg)
-    return rate
+from .models import Product, Category, Subscriber
+from .forms import ProductForm
 
 
 # ==========================================
@@ -37,12 +28,13 @@ def subscribe_newsletter(request):
                 recipient_list = [from_email] 
                 
                 try:
+                    # Enviar correo con timeout o silenciar fallos de red
                     send_mail(
                         subject, 
                         message, 
                         from_email, 
                         recipient_list, 
-                        fail_silently=False
+                        fail_silently=True
                     )
                     messages.success(request, "¡Suscripción exitosa! Bienvenido al club VIP de VELERO.")
                 except Exception:
@@ -54,7 +46,7 @@ def subscribe_newsletter(request):
 
 
 # ==========================================
-# CATÁLOGO DE PRODUCTOS
+# CATÁLOGO DE PRODUCTOS (UNIFICADO)
 # ==========================================
 
 def product_list(request):
@@ -144,10 +136,7 @@ def cart_remove(request, item_key):
 def cart_detail(request):
     cart = request.session.get('cart', {})
     
-    if not cart:
-        subtotal_usd = 0.0
-    else:
-        subtotal_usd = sum(float(item['price']) * item['quantity'] for item in cart.values())
+    subtotal_usd = sum(float(item['price']) * item['quantity'] for item in cart.values()) if cart else 0.0
 
     bcv_rate = 814.69  # Tasa Oficial BCV
     total_ves = subtotal_usd * bcv_rate
@@ -177,15 +166,14 @@ def checkout(request):
         "*DETALLE DEL PEDIDO:*",
     ]
 
+    # Cargar todos los productos de una sola consulta para evitar N+1 queries
+    product_ids = [item['product_id'] for item in cart.values() if 'product_id' in item]
+    products_db = {p.id: p.name for p in Product.objects.filter(id__in=product_ids)}
+
     for item_key, item in cart.items():
-        # Fallback para obtener el nombre de la sesión o directo de BD si hiciera falta
         product_name = item.get('name') or item.get('product_name') or item.get('nombre')
         if not product_name and 'product_id' in item:
-            try:
-                prod = Product.objects.get(id=item['product_id'])
-                product_name = prod.name
-            except Product.DoesNotExist:
-                product_name = "Producto"
+            product_name = products_db.get(item['product_id'], "Producto")
 
         price = item.get('price', 0)
         quantity = item.get('quantity', 1)

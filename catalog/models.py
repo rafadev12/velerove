@@ -1,30 +1,49 @@
 import requests
 from django.db import models
 from django.utils.text import slugify
+from django.core.cache import cache
 from multiselectfield import MultiSelectField
 
 
 def get_bcv_rate():
-    """Obtiene la tasa oficial BCV desde APIs públicas."""
+    """
+    Obtiene la tasa oficial BCV desde APIs públicas con caché de 1 hora.
+    Evita congelar el servidor por peticiones HTTP repetitivas en bucles de plantillas.
+    """
+    cached_rate = cache.get('bcv_rate')
+    if cached_rate:
+        return cached_rate
+
+    rate = None
+
+    # Intento 1
     try:
         response = requests.get(
-            'https://ve.dolarapi.com/v1/dolares/oficial', timeout=2
+            'https://ve.dolarapi.com/v1/dolares/oficial', timeout=1.5
         )
         if response.status_code == 200:
-            return float(response.json().get('promedio', 0))
+            rate = float(response.json().get('promedio', 0))
     except Exception:
         pass
 
-    try:
-        response = requests.get(
-            'https://rates.dolarvzla.com/bcv/current.json', timeout=2
-        )
-        if response.status_code == 200:
-            return float(response.json().get('usd', 0))
-    except Exception:
-        pass
+    # Intento 2 (si falla el primero)
+    if not rate:
+        try:
+            response = requests.get(
+                'https://rates.dolarvzla.com/bcv/current.json', timeout=1.5
+            )
+            if response.status_code == 200:
+                rate = float(response.json().get('usd', 0))
+        except Exception:
+            pass
 
-    return 36.50
+    # Valor por defecto en caso de fallback total
+    if not rate or rate <= 0:
+        rate = 814.69
+
+    # Guardar en caché por 3600 segundos (1 hora)
+    cache.set('bcv_rate', rate, 3600)
+    return rate
 
 
 SIZE_CHOICES = (
@@ -94,7 +113,7 @@ class Product(models.Model):
 
     @property
     def price_bs(self):
-        """Calcula el precio en Bolívares usando la tasa BCV."""
+        """Calcula el precio en Bolívares de forma instantánea usando el valor en caché."""
         rate = get_bcv_rate()
         amount_bs = float(self.price) * rate
         return (
