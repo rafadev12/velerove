@@ -61,29 +61,31 @@
             </div>
 
             <div class="space-y-6">
-                <!-- VARIANTES DE COLOR (SWATCHES) -->
-                {% if color_variants %}
+                <!-- VARIANTES DE COLOR ESTILO MINIMALISTA (ASRV SWATCHES) -->
+                {% if related_colors %}
                 <div class="space-y-3 pt-6 border-t border-zinc-900">
                     <label class="block text-[11px] font-mono uppercase tracking-widest text-zinc-400">
-                        Otras Variantes de Color:
+                        Color: <span class="text-white font-bold">{{ product.name }}</span>
                     </label>
-                    <div class="flex items-center space-x-3">
-                        <div class="p-0.5 border-2 border-white rounded-full">
+                    <div class="grid grid-cols-5 sm:grid-cols-6 gap-2.5">
+                        <!-- Producto Actual (Seleccionado con borde blanco activo) -->
+                        <div class="relative aspect-[3/4] bg-zinc-900 border-2 border-white overflow-hidden cursor-default shadow-sm" title="{{ product.name }}">
                             {% if product.image %}
-                                <img src="{{ product.image.url }}" class="w-7 h-7 rounded-full object-cover">
+                                <img src="{{ product.image.url }}" class="w-full h-full object-cover">
                             {% else %}
-                                <span class="block w-7 h-7 bg-zinc-800 rounded-full"></span>
+                                <span class="block w-full h-full bg-zinc-800"></span>
                             {% endif %}
                         </div>
                         
-                        {% for variant in color_variants %}
+                        <!-- Demás Variantes de Color -->
+                        {% for variant in related_colors %}
                         <a href="{% url 'product_detail' variant.slug %}" 
-                           class="p-0.5 border-2 border-transparent hover:border-zinc-500 rounded-full transition-all"
+                           class="relative aspect-[3/4] bg-zinc-900 border-2 border-transparent hover:border-zinc-500 overflow-hidden group transition-all opacity-75 hover:opacity-100"
                            title="{{ variant.name }}">
                             {% if variant.image %}
-                                <img src="{{ variant.image.url }}" class="w-7 h-7 rounded-full object-cover opacity-60 hover:opacity-100 transition-opacity">
+                                <img src="{{ variant.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             {% else %}
-                                <span class="block w-7 h-7 bg-zinc-700 rounded-full"></span>
+                                <span class="block w-full h-full bg-zinc-800"></span>
                             {% endif %}
                         </a>
                         {% endfor %}

@@ -69,13 +69,12 @@ def product_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     
-    # Variantes de Color por nombre base
-    base_name = product.name.split('-')[0].strip()
+    # Variantes de color: Toma todos los productos de la misma categoría (excluyendo el actual)
     color_variants = Product.objects.filter(
-        name__icontains=base_name
-    ).exclude(id=product.id)[:4]
+        category=product.category
+    ).exclude(id=product.id)[:5]
 
-    # Productos Relacionados
+    # Productos Relacionados generales
     related_products = Product.objects.filter(
         category=product.category
     ).exclude(id=product.id).order_by('?')[:4]
@@ -86,7 +85,7 @@ def product_detail(request, slug):
 
     context = {
         'product': product,
-        'color_variants': color_variants,
+        'related_colors': color_variants,  
         'related_products': related_products,
         'sizes': raw_sizes,
         'is_single_size': is_single_size,
