@@ -7,8 +7,7 @@ from multiselectfield import MultiSelectField
 
 def get_bcv_rate():
     """
-    Obtiene la tasa oficial BCV desde APIs públicas con caché de 1 hora.
-    Evita congelar el servidor por peticiones HTTP repetitivas en bucles de plantillas.
+    Obtiene la tasa oficial BCV desde APIs públicas con caché de 5 minutos (300 segundos).
     """
     cached_rate = cache.get('bcv_rate')
     if cached_rate:
@@ -37,12 +36,12 @@ def get_bcv_rate():
         except Exception:
             pass
 
-    # Valor por defecto en caso de fallback total
+    # Valor por defecto actualizado (Fallback) en caso de fallo total de las APIs
     if not rate or rate <= 0:
-        rate = 814.69
+        rate = 849.00  # <--- Actualizado a la tasa real actual
 
-    # Guardar en caché por 3600 segundos (1 hora)
-    cache.set('bcv_rate', rate, 3600)
+    # Guardar en caché por solo 300 segundos (5 minutos) en lugar de 1 hora
+    cache.set('bcv_rate', rate, 300) 
     return rate
 
 
