@@ -40,7 +40,7 @@ def get_bcv_rate():
     if not rate or rate <= 0:
         rate = 849.00  # <--- Actualizado a la tasa real actual
 
-    # Guardar en caché por solo 300 segundos (5 minutos) en lugar de 1 hora
+    # Guardar en caché por solo 300 segundos (5 minutos) 
     cache.set('bcv_rate', rate, 300) 
     return rate
 
