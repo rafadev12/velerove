@@ -38,10 +38,10 @@ def get_bcv_rate():
 
     # Valor por defecto actualizado (Coloca aquí la tasa real actual si las APIs fallan)
     if not rate or rate <= 0:
-        rate = 814.69  # <--- Cambia este número por el valor real que deba tener si la API no responde
+        rate = 850.56  # <--- Cambia este número por el valor real que deba tener si la API no responde
 
     # Guardar en caché por solo 300 segundos (5 minutos) 
-    cache.set('bcv_rate', rate, 300) 
+    cache.set('bcv_rate', rate, 60) 
     return rate
 
 
