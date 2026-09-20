@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
 
-from .models import Product, Category, Subscriber
+from .models import Product, Category, Subscriber, get_bcv_rate
 from .forms import ProductForm
 
 
@@ -28,7 +28,6 @@ def subscribe_newsletter(request):
                 recipient_list = [from_email] 
                 
                 try:
-                    # Enviar correo con timeout o silenciar fallos de red
                     send_mail(
                         subject, 
                         message, 
@@ -137,7 +136,7 @@ def cart_detail(request):
     
     subtotal_usd = sum(float(item['price']) * item['quantity'] for item in cart.values()) if cart else 0.0
 
-    bcv_rate = 814.69  # Tasa Oficial BCV
+    bcv_rate = get_bcv_rate()  # Tasa Oficial BCV actual
     total_ves = subtotal_usd * bcv_rate
 
     context = {
@@ -156,7 +155,7 @@ def checkout(request):
         return redirect('product_list')
         
     subtotal_usd = sum(float(item.get('price', 0)) * int(item.get('quantity', 1)) for item in cart.values())
-    bcv_rate = 814.69  # Tasa Oficial BCV
+    bcv_rate = get_bcv_rate()  # Tasa Oficial BCV actual
     total_ves = subtotal_usd * bcv_rate
 
     message_lines = [
