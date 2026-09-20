@@ -15,10 +15,10 @@ def get_bcv_rate():
 
     rate = None
 
-    # Intento 1
+    # Intento 1 (subimos el timeout a 4 segundos)
     try:
         response = requests.get(
-            'https://ve.dolarapi.com/v1/dolares/oficial', timeout=1.5
+            'https://ve.dolarapi.com/v1/dolares/oficial', timeout=4
         )
         if response.status_code == 200:
             rate = float(response.json().get('promedio', 0))
@@ -29,16 +29,16 @@ def get_bcv_rate():
     if not rate:
         try:
             response = requests.get(
-                'https://rates.dolarvzla.com/bcv/current.json', timeout=1.5
+                'https://rates.dolarvzla.com/bcv/current.json', timeout=4
             )
             if response.status_code == 200:
                 rate = float(response.json().get('usd', 0))
         except Exception:
             pass
 
-    # Valor por defecto actualizado (Fallback) en caso de fallo total de las APIs
+    # Valor por defecto actualizado (Coloca aquí la tasa real actual si las APIs fallan)
     if not rate or rate <= 0:
-        rate = 849.56  
+        rate = 814.69  # <--- Cambia este número por el valor real que deba tener si la API no responde
 
     # Guardar en caché por solo 300 segundos (5 minutos) 
     cache.set('bcv_rate', rate, 300) 
