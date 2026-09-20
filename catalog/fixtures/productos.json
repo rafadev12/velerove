@@ -1,5 +1,141 @@
 [
 {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "hoodie",
+        "slug": "hoodie"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Recién Agregados",
+        "slug": "recien-agregados"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "Nuestras Promociones",
+        "slug": "promociones"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 4,
+    "fields": {
+        "name": "Tarjetas de Regalo",
+        "slug": "gift-cards"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 5,
+    "fields": {
+        "name": "Accesorios",
+        "slug": "accesorios"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 6,
+    "fields": {
+        "name": "Women",
+        "slug": "women"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 7,
+    "fields": {
+        "name": "Sudaderas",
+        "slug": "sudaderas"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 8,
+    "fields": {
+        "name": "Tank",
+        "slug": "tank"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 9,
+    "fields": {
+        "name": "Oversized",
+        "slug": "oversized"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 10,
+    "fields": {
+        "name": "T-Shirts Semi-Oversized",
+        "slug": "semi-oversized"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 11,
+    "fields": {
+        "name": "Windbreakers",
+        "slug": "windbreakers"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 12,
+    "fields": {
+        "name": "Acid-Wash",
+        "slug": "acid-wash"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 13,
+    "fields": {
+        "name": "Hoodies",
+        "slug": "hoodies"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 14,
+    "fields": {
+        "name": "Jackets",
+        "slug": "jackets"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 15,
+    "fields": {
+        "name": "Shorts",
+        "slug": "shorts"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 16,
+    "fields": {
+        "name": "Joggers",
+        "slug": "joggers"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 17,
+    "fields": {
+        "name": "T Shirts",
+        "slug": "t-shirts"
+    }
+},
+{
     "model": "catalog.product",
     "pk": 4,
     "fields": {
@@ -813,6 +949,14 @@
         "image": "products/hoodie_celeste_new.jpg",
         "sizes": "S,M,L,XL",
         "created_at": "2026-09-19T17:34:21.043Z"
+    }
+},
+{
+    "model": "catalog.subscriber",
+    "pk": 1,
+    "fields": {
+        "email": "ra3041463@gmail.com",
+        "created_at": "2026-09-08T22:50:33.850Z"
     }
 }
 ]
