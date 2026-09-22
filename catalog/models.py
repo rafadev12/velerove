@@ -86,7 +86,11 @@ class Product(models.Model):
         related_name='products',
     )
     description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Actual (Oferta)")
+    compare_price = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True, 
+        verbose_name="Precio Anterior (Tachado)"
+    ) # <--- NUEVO CAMPO PARA DESCUENTOS
     stock = models.PositiveIntegerField(default=10)
     is_active = models.BooleanField(
         default=True, verbose_name='¿Producto Activo?'
@@ -111,8 +115,21 @@ class Product(models.Model):
         return self.name
 
     @property
+    def on_sale(self):
+        """Verifica si el producto tiene un precio anterior mayor al actual (está en oferta)."""
+        return self.compare_price and self.compare_price > self.price
+
+    @property
+    def discount_percentage(self):
+        """Calcula el porcentaje de descuento entero para mostrarlo en la interfaz."""
+        if self.on_sale:
+            discount = ((self.compare_price - self.price) / self.compare_price) * 100
+            return int(round(discount))
+        return 0
+
+    @property
     def price_bs(self):
-        """Calcula el precio en Bolívares de forma instantánea usando el valor en caché."""
+        """Calcula el precio actual en Bolívares de forma instantánea usando el valor en caché."""
         rate = get_bcv_rate()
         amount_bs = float(self.price) * rate
         return (
@@ -121,6 +138,20 @@ class Product(models.Model):
             .replace('.', ',')
             .replace('X', '.')
         )
+
+    @property
+    def compare_price_bs(self):
+        """Calcula el precio anterior (tachado) en Bolívares si aplica."""
+        if self.compare_price:
+            rate = get_bcv_rate()
+            amount_bs = float(self.compare_price) * rate
+            return (
+                f'{amount_bs:,.2f}'
+                .replace(',', 'X')
+                .replace('.', ',')
+                .replace('X', '.')
+            )
+        return None
 
 
 class Subscriber(models.Model):

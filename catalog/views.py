@@ -112,6 +112,7 @@ def cart_add(request, product_id):
             'product_id': product.id,
             'name': product.name,
             'price': str(product.price),
+            'compare_price': str(product.compare_price) if product.compare_price else None, # <--- Guardamos el precio tachado si existe
             'quantity': quantity,
             'size': size,
         }

@@ -43,15 +43,25 @@
                     </span>
                 </div>
 
-                <!-- Título y Precio -->
+                <!-- Título y Precio con Oferta -->
                 <h1 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white font-sans">
                     {{ product.name }}
                 </h1>
                 
-                <div class="flex items-baseline space-x-4">
+                <!-- BLOQUE DE PRECIOS ACTUALIZADO -->
+                <div class="flex items-baseline space-x-3">
                     <p class="text-2xl font-mono text-white font-bold">
                         ${{ product.price }} <span class="text-xs text-zinc-500 font-normal">USD</span>
                     </p>
+
+                    {% if product.on_sale %}
+                        <span class="text-sm font-mono text-zinc-500 line-through">
+                            ${{ product.compare_price }}
+                        </span>
+                        <span class="bg-emerald-500/10 text-emerald-400 text-[10px] font-mono px-2 py-0.5 uppercase tracking-wider font-bold border border-emerald-500/20">
+                            -{{ product.discount_percentage }}% OFF
+                        </span>
+                    {% endif %}
                 </div>
 
                 <!-- Descripción -->
@@ -172,7 +182,12 @@
                     <h3 class="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
                         {{ item.name }}
                     </h3>
-                    <span class="font-mono text-xs text-zinc-400">${{ item.price }}</span>
+                    <div class="flex items-center space-x-2 font-mono text-xs">
+                        {% if item.on_sale %}
+                            <span class="text-zinc-500 line-through">${{ item.compare_price }}</span>
+                        {% endif %}
+                        <span class="text-white">${{ item.price }}</span>
+                    </div>
                 </div>
             </a>
             {% endfor %}

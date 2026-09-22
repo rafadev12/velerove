@@ -16,13 +16,13 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        # Se elimina 'sizes' de esta lista para evitar el FieldError
         fields = [
             "name",
             "slug",
             "category",
             "description",
             "price",
+            "compare_price",
             "stock",
             "image",
         ]
@@ -53,6 +53,12 @@ class ProductForm(forms.ModelForm):
                     "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
                 }
             ),
+            "compare_price": forms.NumberInput(
+                attrs={
+                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors",
+                    "placeholder": "Opcional (Ej: 45.00)"
+                }
+            ),  # <--- WIDGET PARA EL PRECIO ANTERIOR
             "stock": forms.NumberInput(
                 attrs={
                     "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
