@@ -16,14 +16,6 @@
 
     <!-- Encabezado / Navegación Transparente -->
     <header class="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-8 py-6 text-xs font-mono tracking-widest uppercase">
-        <!-- Menú Izquierda -->
-        <!-- <nav class="hidden md:flex space-x-6 text-zinc-200">
-            <a href="#colecciones" class="hover:text-white transition-colors">Colecciones</a>
-            <a href="?category=hombre#catalogo" class="hover:text-white transition-colors">Hombre</a>
-            <a href="?category=women#catalogo" class="hover:text-white transition-colors">Mujer</a>
-            <a href="?category=accesorios#catalogo" class="hover:text-white transition-colors">Accesorios</a>
-        </nav> -->
-
         <!-- Marca Central -->
         <a href="{% url 'product_list' %}" class="text-2xl font-black tracking-[0.3em] font-sans text-white mx-auto md:mx-0">
             VELERO
@@ -312,6 +304,14 @@
             <div>
                 {% if product.slug %}
                     <a href="{% url 'product_detail' product.slug %}" class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative">
+                        
+                        <!-- ETIQUETA DE DESCUENTO FLOTANTE -->
+                        {% if product.on_sale %}
+                        <div class="absolute top-2 left-2 z-10 bg-emerald-500 text-black font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md">
+                            -{{ product.discount_percentage }}%
+                        </div>
+                        {% endif %}
+
                         {% if product.image %}
                             <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                         {% else %}
@@ -333,7 +333,6 @@
                         </a>
                     {% else %}
                         <h3 class="font-bold uppercase tracking-wider text-[11px] md:text-xs text-white line-clamp-1">{{ product.name }}</h3>
-                    </h3>
                     {% endif %}
                     <p class="text-[10px] md:text-[11px] text-zinc-500 mt-1 line-clamp-2 hidden sm:block">{{ product.description }}</p>
                 </div>
@@ -344,14 +343,23 @@
                 {% if product.pk %}
                 <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
                     {% csrf_token %}
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
                         <div>
-                            <span class="font-mono text-xs md:text-sm font-bold text-white">${{ product.price }}</span>
+                            <!-- BLOQUE DE PRECIOS CON SOPORTE DE OFERTA -->
+                            {% if product.on_sale %}
+                                <span class="block font-mono text-[10px] text-zinc-500 line-through">
+                                    ${{ product.compare_price }}
+                                </span>
+                            {% endif %}
+                            <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-white">
+                                <span>${{ product.price }}</span>
+                                <span class="text-[9px] text-zinc-500 font-normal">USD</span>
+                            </div>
+                            
                             {% if product.price_bs %}
                                 <span class="block text-[9px] md:text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
                             {% endif %}
                         </div>
-                        
                     </div>
 
                     <button type="submit" class="w-full bg-white text-black py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
@@ -429,19 +437,8 @@
         </div>
     </div>
 
-    <!-- Banner Flotante Promocional -->
-    <!-- <div id="promo-badge" class="fixed bottom-6 left-6 z-40 bg-white text-black p-4 shadow-2xl border border-zinc-200 max-w-[180px] transition-all">
-        <button onclick="document.getElementById('promo-badge').remove()" 
-                class="absolute -top-3 -right-3 bg-black text-white w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold border border-white hover:bg-zinc-800">
-            ✕
-        </button>
-        <p class="text-center font-black uppercase text-xs leading-tight tracking-tight">
-            OBTÉN UN 10% DE DESCUENTO
-        </p>
-    </div> -->
-
     <!-- Botón Flotante Chat / WhatsApp -->
-    <a href="https://wa.me/584121143302 ?text=Hola%20VELERO,%20quiero%20consultar%20sobre%20sus%20productos." 
+    <a href="https://wa.me/584121143302?text=Hola%20VELERO,%20quiero%20consultar%20sobre%20sus%20productos." 
        target="_blank"
        rel="noopener noreferrer"
        class="fixed bottom-6 right-6 z-40 bg-white text-black w-12 h-12 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
@@ -507,18 +504,7 @@
                     <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
                 </summary>
                 <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
-                    Nuestras prendas cuentan con una silueta <em>Athletic-Fit</em> estructurada. Te recomendamos seleccionar tu talla habitual si buscas un ajuste atlético al cuerpo, o una talla superior si prefieres un estilo <em>oversized</em>.
-                </div>
-            </details>
-
-            <!-- Item 5: Pedidos vía WhatsApp -->
-            <details class="group bg-zinc-950 border border-zinc-900 transition-all duration-300">
-                <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-mono text-xs uppercase tracking-widest text-zinc-200 group-open:text-white">
-                    <span>¿Cómo se procesa la compra por WhatsApp?</span>
-                    <span class="text-lg transition-transform duration-300 group-open:rotate-45 text-zinc-500 group-open:text-white">+</span>
-                </summary>
-                <div class="px-6 pb-6 text-xs text-zinc-400 font-sans leading-relaxed border-t border-zinc-900/50 pt-4">
-                    Al completar tu carrito y presionar "Completar Pedido vía WhatsApp", se generará automáticamente un mensaje con la lista detallada de tus productos, la talla, la tasa BCV y el monto total para confirmación inmediata con un asesor.
+                    Nuestras prendas cuentan con una silueta <em>Athletic-Fit</em> estructurada. Consulta la guía de tallas dentro del detalle de cada producto para una elección precisa.
                 </div>
             </details>
 
