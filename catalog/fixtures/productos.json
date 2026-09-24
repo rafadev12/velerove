@@ -205,23 +205,6 @@
 },
 {
     "model": "catalog.product",
-    "pk": 10,
-    "fields": {
-        "name": "Black Cap",
-        "slug": "Black-Cap",
-        "category": 5,
-        "description": "Tela: Anti-Fluido",
-        "price": "45.00",
-        "compare_price": null,
-        "stock": 0,
-        "is_active": false,
-        "image": "products/gorra_negra_12_t1WlzE8.jpg",
-        "sizes": "TU",
-        "created_at": "2026-09-09T03:05:54.291Z"
-    }
-},
-{
-    "model": "catalog.product",
     "pk": 11,
     "fields": {
         "name": "Grey Cap",
@@ -772,7 +755,7 @@
         "slug": "coast-velero-beige",
         "category": 15,
         "description": "Tejido: Stretch Sports",
-        "price": "45.00",
+        "price": "35.00",
         "compare_price": null,
         "stock": 10,
         "is_active": true,
@@ -789,7 +772,7 @@
         "slug": "dock-velero-black",
         "category": 15,
         "description": "Tejido: Stretch Sports",
-        "price": "45.00",
+        "price": "35.00",
         "compare_price": null,
         "stock": 10,
         "is_active": true,
