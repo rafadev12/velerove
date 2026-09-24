@@ -1,1 +1,1 @@
-web: python manage.py loaddata productos.json && gunicorn velero_store.wsgi --log-file -
+web: python manage.py migrate && python manage.py loaddata productos.json && gunicorn velero_store.wsgi --log-file -
