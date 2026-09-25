@@ -20,11 +20,18 @@
             {% if product.image %}
                 <img src="{{ product.image.url }}" 
                      alt="{{ product.name }}" 
-                     class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
+                     class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 {% if product.is_sold_out %}opacity-50 grayscale{% endif %}">
             {% else %}
                 <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">
                     SIN IMAGEN DISPONIBLE
                 </div>
+            {% endif %}
+
+            <!-- ETIQUETA FLOTANTE DE AGOTADO EN IMAGEN -->
+            {% if product.is_sold_out %}
+            <div class="absolute top-4 right-4 z-10 bg-red-600 text-white font-mono text-xs font-bold px-3 py-1 uppercase tracking-widest shadow-lg">
+                Agotado
+            </div>
             {% endif %}
         </div>
 
@@ -38,9 +45,16 @@
                         {{ product.category.name|default:"Performance" }}
                     </span>
                     <span class="w-1 h-1 rounded-full bg-zinc-700"></span>
-                    <span class="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-400">
-                        DISPONIBLE
-                    </span>
+                    
+                    {% if product.is_sold_out %}
+                        <span class="text-[10px] font-mono uppercase tracking-[0.2em] text-red-500 font-bold">
+                            AGOTADO
+                        </span>
+                    {% else %}
+                        <span class="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-400">
+                            DISPONIBLE
+                        </span>
+                    {% endif %}
                 </div>
 
                 <!-- Título y Precio con Oferta -->
@@ -103,55 +117,68 @@
                 </div>
                 {% endif %}
 
-                <!-- Formulario de Selección de Talla y Carrito -->
-                <form action="{% url 'cart_add' product.id %}" method="POST" class="space-y-6 pt-6 border-t border-zinc-900">
-                    {% csrf_token %}
-                    
-                    <!-- SELECCIÓN DE TALLA (ADAPTADA PARA ACCESORIOS Y PRENDAS) -->
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <label class="text-[11px] font-mono uppercase tracking-widest text-zinc-400">
-                                {% if is_single_size %}Talla única:{% else %}Talla (Athletic Fit):{% endif %}
-                            </label>
-                            
-                            <!-- Guía de Tallas (Oculta para Talla Única / Accesorios) -->
-                            {% if not is_single_size %}
-                            <button type="button" 
-                                    onclick="toggleSizeGuide()" 
-                                    class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-white underline underline-offset-4 transition-colors">
-                                Guía de Tallas 📏
-                            </button>
-                            {% endif %}
+                <!-- CONDICIONAL: SI ESTÁ AGOTADO O DISPONIBLE -->
+                {% if product.is_sold_out %}
+                    <!-- BLOQUE DE AGOTADO (Reemplaza el formulario) -->
+                    <div class="space-y-4 pt-6 border-t border-zinc-900">
+                        <div class="w-full bg-zinc-900 text-zinc-500 font-mono text-xs uppercase tracking-[0.25em] py-4 font-bold text-center border border-zinc-800 cursor-not-allowed">
+                            Agotado - Sin Existencias
                         </div>
-                        
-                        <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
-                            {% if is_single_size %}
-                                <!-- TALLA ÚNICA PARA ACCESORIOS -->
-                                <label class="col-span-3 sm:col-span-3 cursor-default">
-                                    <input type="radio" name="size" value="TU" checked class="hidden">
-                                    <span class="block text-center py-3 text-xs font-mono uppercase border border-white bg-white text-black font-bold tracking-wider">
-                                        TALLA ÚNICA (OS)
-                                    </span>
-                                </label>
-                            {% else %}
-                                <!-- TALLAS DINÁMICAS (PRENDAS) -->
-                                {% for size in sizes %}
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="size" value="{{ size }}" class="peer hidden" {% if forloop.first %}checked{% endif %}>
-                                    <span class="block text-center py-3 text-xs font-mono uppercase border border-zinc-900 bg-zinc-950 text-zinc-400 peer-checked:border-white peer-checked:bg-white peer-checked:text-black peer-checked:font-bold transition-all">
-                                        {{ size }}
-                                    </span>
-                                </label>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+                        <p class="text-[11px] font-mono text-zinc-500 text-center">
+                            Este producto temporalmente no se encuentra disponible en inventario.
+                        </p>
                     </div>
+                {% else %}
+                    <!-- Formulario de Selección de Talla y Carrito -->
+                    <form action="{% url 'cart_add' product.id %}" method="POST" class="space-y-6 pt-6 border-t border-zinc-900">
+                        {% csrf_token %}
+                        
+                        <!-- SELECCIÓN DE TALLA (ADAPTADA PARA ACCESORIOS Y PRENDAS) -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="text-[11px] font-mono uppercase tracking-widest text-zinc-400">
+                                    {% if is_single_size %}Talla única:{% else %}Talla (Athletic Fit):{% endif %}
+                                </label>
+                                
+                                <!-- Guía de Tallas (Oculta para Talla Única / Accesorios) -->
+                                {% if not is_single_size %}
+                                <button type="button" 
+                                        onclick="toggleSizeGuide()" 
+                                        class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-white underline underline-offset-4 transition-colors">
+                                    Guía de Tallas 📏
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                                {% if is_single_size %}
+                                    <!-- TALLA ÚNICA PARA ACCESORIOS -->
+                                    <label class="col-span-3 sm:col-span-3 cursor-default">
+                                        <input type="radio" name="size" value="TU" checked class="hidden">
+                                        <span class="block text-center py-3 text-xs font-mono uppercase border border-white bg-white text-black font-bold tracking-wider">
+                                            TALLA ÚNICA (OS)
+                                        </span>
+                                    </label>
+                                {% else %}
+                                    <!-- TALLAS DINÁMICAS (PRENDAS) -->
+                                    {% for size in sizes %}
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="size" value="{{ size }}" class="peer hidden" {% if forloop.first %}checked{% endif %}>
+                                        <span class="block text-center py-3 text-xs font-mono uppercase border border-zinc-900 bg-zinc-950 text-zinc-400 peer-checked:border-white peer-checked:bg-white peer-checked:text-black peer-checked:font-bold transition-all">
+                                            {{ size }}
+                                        </span>
+                                    </label>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
 
-                    <!-- Botón Añadir al Carrito -->
-                    <button type="submit" class="w-full bg-white text-black hover:bg-zinc-200 font-mono text-xs uppercase tracking-[0.25em] py-4 font-bold transition-all">
-                        Añadir al Carrito
-                    </button>
-                </form>
+                        <!-- Botón Añadir al Carrito -->
+                        <button type="submit" class="w-full bg-white text-black hover:bg-zinc-200 font-mono text-xs uppercase tracking-[0.25em] py-4 font-bold transition-all">
+                            Añadir al Carrito
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -312,8 +312,15 @@
                         </div>
                         {% endif %}
 
+                        <!-- ETIQUETA DE AGOTADO FLOTANTE (Opcional en la imagen) -->
+                        {% if product.is_sold_out %}
+                        <div class="absolute top-2 right-2 z-10 bg-red-600 text-white font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md">
+                            Agotado
+                        </div>
+                        {% endif %}
+
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 {% if product.is_sold_out %}opacity-50 grayscale{% endif %}">
                         {% else %}
                             <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">SIN IMAGEN</div>
                         {% endif %}
@@ -336,36 +343,52 @@
                     {% endif %}
                     <p class="text-[10px] md:text-[11px] text-zinc-500 mt-1 line-clamp-2 hidden sm:block">{{ product.description }}</p>
                 </div>
+
+                
             </div>
 
             <!-- Acciones de Carrito -->
             <div class="p-3 md:p-4 pt-0">
                 {% if product.pk %}
-                <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
-                    {% csrf_token %}
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
-                        <div>
-                            <!-- BLOQUE DE PRECIOS CON SOPORTE DE OFERTA -->
-                            {% if product.on_sale %}
-                                <span class="block font-mono text-[10px] text-zinc-500 line-through">
-                                    ${{ product.compare_price }}
-                                </span>
-                            {% endif %}
-                            <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-white">
-                                <span>${{ product.price }}</span>
-                                <span class="text-[9px] text-zinc-500 font-normal">USD</span>
-                            </div>
-                            
-                            {% if product.price_bs %}
-                                <span class="block text-[9px] md:text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
-                            {% endif %}
+                    {% if product.is_sold_out %}
+                    <!-- SI ESTÁ AGOTADO -->
+                    <div class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
+                        <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-zinc-600">
+                            <span class="line-through">${{ product.price }}</span>
+                            <span class="text-[9px] text-zinc-700 font-normal">USD</span>
+                        </div>
+                        <div class="w-full bg-zinc-900 text-zinc-500 py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-center cursor-not-allowed">
+                            Agotado
                         </div>
                     </div>
+                    {% else %}
+                    <!-- SI HAY STOCK DISPONIBLE -->
+                    <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
+                        {% csrf_token %}
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+                            <div>
+                                <!-- BLOQUE DE PRECIOS CON SOPORTE DE OFERTA -->
+                                {% if product.on_sale %}
+                                    <span class="block font-mono text-[10px] text-zinc-500 line-through">
+                                        ${{ product.compare_price }}
+                                    </span>
+                                {% endif %}
+                                <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-white">
+                                    <span>${{ product.price }}</span>
+                                    <span class="text-[9px] text-zinc-500 font-normal">USD</span>
+                                </div>
+                                
+                                {% if product.price_bs %}
+                                    <span class="block text-[9px] md:text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                    <button type="submit" class="w-full bg-white text-black py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
-                        + Añadir
-                    </button>
-                </form>
+                        <button type="submit" class="w-full bg-white text-black py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
+                            + Añadir
+                        </button>
+                    </form>
+                    {% endif %}
                 {% else %}
                 <div class="mt-2 pt-3 border-t border-zinc-900">
                     <span class="text-[9px] md:text-[10px] font-mono text-red-500 uppercase">No disponible</span>
