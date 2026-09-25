@@ -90,8 +90,8 @@ class Product(models.Model):
     compare_price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True, 
         verbose_name="Precio Anterior (Tachado)"
-    ) # <--- NUEVO CAMPO PARA DESCUENTOS
-    stock = models.PositiveIntegerField(default=10)
+    )
+    stock = models.PositiveIntegerField(default=10, verbose_name="Stock Disponible")
     is_active = models.BooleanField(
         default=True, verbose_name='¿Producto Activo?'
     )
@@ -113,6 +113,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_sold_out(self):
+        """Devuelve True si el stock es 0 (Agotado)."""
+        return self.stock == 0
 
     @property
     def on_sale(self):
