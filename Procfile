@@ -1,1 +1,1 @@
-web: python manage.py migrate && python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'velero_store.settings'); django.setup(); from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='velero').exists() or User.objects.create_superuser('velero', 'contacto@velerove.com', 'velerove123')" && gunicorn velero_store.wsgi --log-file -
+web: python manage.py migrate && python create_admin.py && python manage.py loaddata productos.json || true && gunicorn velero_store.wsgi --log-file -
