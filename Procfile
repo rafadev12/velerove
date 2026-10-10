@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py DJANGO_SUPERUSER_PASSWORD="velerove" createsuperuser --no-input --username velero.com --email contacto@velerove.com || true && python manage.py loaddata productos.json || true && gunicorn velero_store.wsgi --log-file -git add Procfile
+web: python manage.py migrate && DJANGO_SUPERUSER_PASSWORD="velerove" python manage.py createsuperuser --noinput --username velero1 --email contacto@velerove.com || true && python manage.py loaddata productos.json || true && gunicorn velero_store.wsgi --log-file -
