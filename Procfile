@@ -1,2 +1,2 @@
-release: python manage.py migrate && python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='velero').exists() or User.objects.create_superuser('velero', 'contacto@velerove.com', 'velerove123')"
+release: python manage.py migrate && python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'velero_store.settings'); django.setup(); from django.contrib.auth import get_user_model; User = get_user_model(); u, _ = User.objects.get_or_create(username='velero'); u.set_password('velerove123'); u.is_staff = True; u.is_superuser = True; u.is_active = True; u.save(); print('>>> SUPERUSUARIO CREADO/ACTUALIZADO EN RENDER <<<')"
 web: gunicorn velero_store.wsgi:application

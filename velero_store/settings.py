@@ -135,3 +135,13 @@ MAILERS = {
 }
 
 DEFAULT_FROM_EMAIL = "VELERO Store <tu-correo@gmail.com>"
+
+# Asegurar que las contraseñas se verifiquen con el hasher por defecto en producción
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]
+
+# Asegurar que la sesión no dependa del dominio exacto si hay conflicto www vs no-www
+SESSION_COOKIE_DOMAIN = None
+CSRF_COOKIE_DOMAIN = None
