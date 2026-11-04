@@ -111,9 +111,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Configuración multimedia local (Apuntando al disco persistente de Render en /app/media)
+# Configuración multimedia: Ruta absoluta al disco persistente en Render (/app/media)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if 'RENDER' in os.environ:
+    MEDIA_ROOT = '/app/media'
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Redirecciones de Autenticación
 LOGIN_URL = 'login'
