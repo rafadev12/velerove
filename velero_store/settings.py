@@ -107,10 +107,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Activar WhiteNoise pesado solo cuando se despliega en Render
+# Activar WhiteNoise para estáticos en producción
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Configuración multimedia local (Apuntando al disco persistente de Render en /app/media)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -137,21 +138,10 @@ MAILERS = {
 
 DEFAULT_FROM_EMAIL = "VELERO Store <tu-correo@gmail.com>"
 
-# Asegurar que las contraseñas se verifiquen con el hasher por defecto en producción
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
 
-# Asegurar que la sesión no dependa del dominio exacto si hay conflicto www vs no-www
 SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_DOMAIN = None
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'ivb6e42k'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '837794496828763'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'Je2-afaZFEwOQJim97p2a_moaJ0')
-}
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
