@@ -35,10 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'catalog',
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
+    'catalog',
 ]
 
 MIDDLEWARE = [
@@ -149,10 +149,12 @@ PASSWORD_HASHERS = [
 SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_DOMAIN = None
 
+import os
+
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'ivb6e42k',
-    'API_KEY': '837794496828763',
-    'API_SECRET': 'Je2-afaZFEwOQJim97p2a_moaJ0'
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'ivb6e42k'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '837794496828763'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'Je2-afaZFEwOQJim97p2a_moaJ0')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
