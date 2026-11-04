@@ -193,7 +193,7 @@ def checkout(request):
     raw_message = "\n".join(message_lines)
     encoded_message = urllib.parse.quote(raw_message)
 
-    whatsapp_phone = "584121143302"
+    whatsapp_phone = "584221143302"  # Número de WhatsApp de VELERO
     whatsapp_url = f"https://api.whatsapp.com/send?phone={whatsapp_phone}&text={encoded_message}"
 
     context = {

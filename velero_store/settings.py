@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'catalog',
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +148,11 @@ PASSWORD_HASHERS = [
 # Asegurar que la sesión no dependa del dominio exacto si hay conflicto www vs no-www
 SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_DOMAIN = None
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'ivb6e42k',
+    'API_KEY': '837794496828763',
+    'API_SECRET': 'Je2-afaZFEwOQJim97p2a_moaJ0'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
