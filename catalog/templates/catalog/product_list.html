@@ -296,113 +296,156 @@
     </div>
 
 <!-- Grid de Productos -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-        {% for product in products %}
-        <div class="group bg-zinc-950 border border-zinc-900 rounded-lg overflow-hidden flex flex-col justify-between hover:border-zinc-700 transition-colors">
-            
-            <!-- Imagen y Detalle del Producto -->
-            <div>
-                {% if product.slug %}
-                    <a href="{% url 'product_detail' product.slug %}" class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative">
-                        
-                        <!-- ETIQUETA DE DESCUENTO FLOTANTE -->
-                        {% if product.on_sale %}
-                        <div class="absolute top-2 left-2 z-10 bg-emerald-500 text-black font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md">
-                            -{{ product.discount_percentage }}%
-                        </div>
-                        {% endif %}
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+    {% for product in products %}
+    <div class="group bg-zinc-950 border border-zinc-900 rounded-lg overflow-hidden flex flex-col justify-between hover:border-zinc-700 transition-colors">
+        
+        <!-- Imagen / Carrusel y Detalle -->
+        <div>
+            <div class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative group/slider" x-data="{ 
+                activeSlide: 0, 
+                totalSlides: {% if product.media_files.exists %}{% if product.image %}{{ product.media_files.count|add:1 }}{% else %}{{ product.media_files.count }}{% endif %}{% else %}1{% endif %},
+                next() { 
+                    if (this.totalSlides > 1) this.activeSlide = (this.activeSlide + 1) % this.totalSlides; 
+                },
+                prev() { 
+                    if (this.totalSlides > 1) this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides; 
+                }
+            }">
+                
+                <!-- ETIQUETA DE DESCUENTO FLOTANTE -->
+                {% if product.on_sale %}
+                <div class="absolute top-2 left-2 z-20 bg-emerald-500 text-black font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md pointer-events-none">
+                    -{{ product.discount_percentage }}%
+                </div>
+                {% endif %}
 
-                        <!-- ETIQUETA DE AGOTADO FLOTANTE (Opcional en la imagen) -->
-                        {% if product.is_sold_out %}
-                        <div class="absolute top-2 right-2 z-10 bg-red-600 text-white font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md">
-                            Agotado
-                        </div>
-                        {% endif %}
+                <!-- ETIQUETA DE AGOTADO FLOTANTE -->
+                {% if product.is_sold_out %}
+                <div class="absolute top-2 right-2 z-20 bg-red-600 text-white font-mono text-[9px] md:text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-md pointer-events-none">
+                    Agotado
+                </div>
+                {% endif %}
 
-                        {% if product.image %}
+                <!-- CONTENEDOR DE DIAPOSITIVAS -->
+                <div class="w-full h-full relative">
+
+                    <!-- 1. Si tiene imagen principal -->
+                    {% if product.image %}
+                    <div class="absolute inset-0 w-full h-full" x-show="activeSlide === 0" style="display: block;">
+                        <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}#{% endif %}" class="block w-full h-full">
                             <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 {% if product.is_sold_out %}opacity-50 grayscale{% endif %}">
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- 2. Archivos multimedia adicionales de la galería -->
+                    {% for media in product.media_files.all %}
+                    <div class="absolute inset-0 w-full h-full" x-show="activeSlide === {% if product.image %}{{ forloop.counter }}{% else %}{{ forloop.counter0 }}{% endif %}" style="display: {% if not product.image and forloop.first %}block{% else %}none{% endif %};">
+                        {% if media.is_video %}
+                            <video src="{{ media.file.url }}" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
                         {% else %}
-                            <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">SIN IMAGEN</div>
+                            <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}#{% endif %}" class="block w-full h-full">
+                                <img src="{{ media.file.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            </a>
                         {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Si no tiene ni imagen principal ni galería -->
+                    {% if not product.image and not product.media_files.exists %}
+                    <div class="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-xs">SIN IMAGEN</div>
+                    {% endif %}
+
+                </div>
+
+                <!-- BOTONES DE NAVEGACIÓN (Solo si hay más de 1 elemento en total) -->
+                <template x-if="totalSlides > 1">
+                    <div>
+                        <button type="button" @click.prevent.stop="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/70 hover:bg-black text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity cursor-pointer">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button type="button" @click.prevent.stop="next()" class="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/70 hover:bg-black text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity cursor-pointer">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+
+                        <!-- PUNTITOS INFERIORES -->
+                        <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center gap-1.5 pointer-events-none">
+                            <template x-for="i in totalSlides" :key="i">
+                                <span class="w-1.5 h-1.5 rounded-full transition-all" :class="activeSlide === (i - 1) ? 'bg-white w-3' : 'bg-white/50'"></span>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+
+            <!-- Título y Descripción -->
+            <div class="p-3 md:p-4">
+                {% if product.slug %}
+                    <a href="{% url 'product_detail' product.slug %}" class="block hover:underline">
+                        <h3 class="font-bold uppercase tracking-wider text-[11px] md:text-xs text-white line-clamp-1">{{ product.name }}</h3>
                     </a>
                 {% else %}
-                    <div class="block aspect-[3/4] bg-zinc-900 overflow-hidden relative opacity-50">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" class="w-full h-full object-cover">
-                        {% endif %}
-                    </div>
+                    <h3 class="font-bold uppercase tracking-wider text-[11px] md:text-xs text-white line-clamp-1">{{ product.name }}</h3>
                 {% endif %}
-
-                <div class="p-3 md:p-4">
-                    {% if product.slug %}
-                        <a href="{% url 'product_detail' product.slug %}" class="block hover:underline">
-                            <h3 class="font-bold uppercase tracking-wider text-[11px] md:text-xs text-white line-clamp-1">{{ product.name }}</h3>
-                        </a>
-                    {% else %}
-                        <h3 class="font-bold uppercase tracking-wider text-[11px] md:text-xs text-white line-clamp-1">{{ product.name }}</h3>
-                    {% endif %}
-                    <p class="text-[10px] md:text-[11px] text-zinc-500 mt-1 line-clamp-2 hidden sm:block">{{ product.description }}</p>
-                </div>
-
-                
+                <p class="text-[10px] md:text-[11px] text-zinc-500 mt-1 line-clamp-2 hidden sm:block">{{ product.description }}</p>
             </div>
+        </div>
 
-            <!-- Acciones de Carrito -->
-            <div class="p-3 md:p-4 pt-0">
-                {% if product.pk %}
-                    {% if product.is_sold_out %}
-                    <!-- SI ESTÁ AGOTADO -->
-                    <div class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
-                        <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-zinc-600">
-                            <span class="line-through">${{ product.price }}</span>
-                            <span class="text-[9px] text-zinc-700 font-normal">USD</span>
-                        </div>
-                        <div class="w-full bg-zinc-900 text-zinc-500 py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-center cursor-not-allowed">
-                            Agotado
-                        </div>
+        <!-- Acciones de Carrito -->
+        <div class="p-3 md:p-4 pt-0">
+            {% if product.pk %}
+                {% if product.is_sold_out %}
+                <div class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
+                    <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-zinc-600">
+                        <span class="line-through">${{ product.price }}</span>
+                        <span class="text-[9px] text-zinc-700 font-normal">USD</span>
                     </div>
-                    {% else %}
-                    <!-- SI HAY STOCK DISPONIBLE -->
-                    <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
-                        {% csrf_token %}
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
-                            <div>
-                                <!-- BLOQUE DE PRECIOS CON SOPORTE DE OFERTA -->
-                                {% if product.on_sale %}
-                                    <span class="block font-mono text-[10px] text-zinc-500 line-through">
-                                        ${{ product.compare_price }}
-                                    </span>
-                                {% endif %}
-                                <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-white">
-                                    <span>${{ product.price }}</span>
-                                    <span class="text-[9px] text-zinc-500 font-normal">USD</span>
-                                </div>
-                                
-                                {% if product.price_bs %}
-                                    <span class="block text-[9px] md:text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full bg-white text-black py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
-                            + Añadir
-                        </button>
-                    </form>
-                    {% endif %}
+                    <div class="w-full bg-zinc-900 text-zinc-500 py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-center cursor-not-allowed">
+                        Agotado
+                    </div>
+                </div>
                 {% else %}
-                <div class="mt-2 pt-3 border-t border-zinc-900">
-                    <span class="text-[9px] md:text-[10px] font-mono text-red-500 uppercase">No disponible</span>
-                </div>
-                {% endif %}
-            </div>
+                <form action="{% url 'cart_add' product.pk %}" method="post" class="mt-2 pt-3 border-t border-zinc-900 flex flex-col gap-2">
+                    {% csrf_token %}
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+                        <div>
+                            {% if product.on_sale %}
+                                <span class="block font-mono text-[10px] text-zinc-500 line-through">
+                                    ${{ product.compare_price }}
+                                </span>
+                            {% endif %}
+                            <div class="flex items-baseline space-x-1 font-mono text-xs md:text-sm font-bold text-white">
+                                <span>${{ product.price }}</span>
+                                <span class="text-[9px] text-zinc-500 font-normal">USD</span>
+                            </div>
+                            
+                            {% if product.price_bs %}
+                                <span class="block text-[9px] md:text-[10px] font-mono text-emerald-400">≈ {{ product.price_bs }} Bs</span>
+                            {% endif %}
+                        </div>
+                    </div>
 
+                    <button type="submit" class="w-full bg-white text-black py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-200 transition">
+                        + Añadir
+                    </button>
+                </form>
+                {% endif %}
+            {% else %}
+            <div class="mt-2 pt-3 border-t border-zinc-900">
+                <span class="text-[9px] md:text-[10px] font-mono text-red-500 uppercase">No disponible</span>
+            </div>
+            {% endif %}
         </div>
-        {% empty %}
-        <div class="col-span-full text-center py-24 border border-dashed border-zinc-900 rounded-lg">
-            <p class="text-zinc-500 text-xs uppercase tracking-widest">No se encontraron productos con los criterios seleccionados.</p>
-        </div>
-        {% endfor %}
+
     </div>
+    {% empty %}
+    <div class="col-span-full text-center py-24 border border-dashed border-zinc-900 rounded-lg">
+        <p class="text-zinc-500 text-xs uppercase tracking-widest">No se encontraron productos con los criterios seleccionados.</p>
+    </div>
+    {% endfor %}
+</div>
 
     <!-- Paginación estilizada -->
     {% if products.has_other_pages %}

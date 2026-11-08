@@ -95,7 +95,8 @@ class Product(models.Model):
     is_active = models.BooleanField(
         default=True, verbose_name='¿Producto Activo?'
     )
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
+    # Recuperamos la imagen principal opcional
+    image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name="Imagen Principal (Opcional)")
     sizes = MultiSelectField(
         choices=SIZE_CHOICES, default=['S', 'M', 'L', 'XL']
     )
@@ -113,6 +114,8 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
 
     @property
     def is_sold_out(self):
@@ -157,6 +160,35 @@ class Product(models.Model):
                 .replace('X', '.')
             )
         return None
+
+
+class ProductMedia(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        related_name='media_files', 
+        on_delete=models.CASCADE, 
+        verbose_name="Producto"
+    )
+    file = models.FileField(
+        upload_to='products/gallery/', 
+        verbose_name="Archivo (Imagen o Video)"
+    )
+    is_video = models.BooleanField(
+        default=False, 
+        verbose_name="¿Es un video?"
+    )
+    order = models.PositiveIntegerField(
+        default=0, 
+        verbose_name="Orden de visualización"
+    )
+
+    class Meta:
+        verbose_name = 'Archivo multimedia'
+        verbose_name_plural = 'Archivos multimedia (Galería)'
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Media #{self.order} para {self.product.name}"
 
 
 class Subscriber(models.Model):

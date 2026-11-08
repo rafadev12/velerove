@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -23,7 +23,14 @@
             }
         }
     </script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 </head>
+
+
+
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col selection:bg-white selection:text-black">
 
     <!-- Preloader -->
@@ -257,5 +264,72 @@
         }
     });
 </script>
+
+<!-- Modal Promocional de VELERO -->
+<div x-data="{ 
+    open: false,
+    init() {
+        // Mostrar el modal a los 2 segundos de entrar a la web (solo una vez por sesión)
+        if (!sessionStorage.getItem('velero_modal_shown')) {
+            setTimeout(() => {
+                this.open = true;
+                sessionStorage.setItem('velero_modal_shown', 'true');
+            }, 2000);
+        }
+    }
+}" 
+x-show="open" 
+x-transition.opacity.duration.300ms
+class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+style="display: none;"
+@keydown.escape.window="open = false">
+
+    <!-- Contenedor del Modal -->
+    <div @click.away="open = false" class="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-lg overflow-hidden shadow-2xl flex flex-col md:flex-row">
+        
+        <!-- Botón de Cerrar (X) -->
+        <button @click="open = false" class="absolute top-3 right-3 z-30 text-zinc-400 hover:text-white bg-black/50 hover:bg-black p-1.5 rounded-full transition-colors cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- Lado Izquierdo: Texto y Acción -->
+        <div class="w-full md:w-1/2 p-8 flex flex-col justify-between text-center md:text-left bg-zinc-950">
+            <div>
+                <!-- Logotipo o Marca -->
+                <h2 class="font-mono text-xs uppercase tracking-widest text-zinc-400 mb-6">VELERO STORE</h2>
+                
+                <!-- Título del Descuento -->
+                <h3 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-white mb-2">
+                    10% OFF
+                </h3>
+                <p class="text-xs md:text-sm text-zinc-400 uppercase tracking-wider mb-6 leading-relaxed">
+                    En toda la mercancía <br><span class="text-emerald-400 font-bold">solo en compras desde la web</span>.
+                </p>
+            </div>
+
+            <!-- Botón Comprar Ahora (Cierra la pestaña) -->
+            <div>
+                <button @click="open = false" class="w-full bg-white text-black py-3 px-6 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors cursor-pointer">
+                    Comprar Ahora
+                </button>
+                <p class="text-[10px] text-zinc-600 uppercase tracking-widest mt-3">
+                    Descuento aplicado directamente en el catálogo.
+                </p>
+            </div>
+        </div>
+
+        <!-- Lado Derecho: Imagen Estilizada de la Marca -->
+        <div class="w-full md:w-1/2 relative aspect-[4/3] md:aspect-auto bg-zinc-900 overflow-hidden">
+            <!-- Puedes cambiar esta URL por una foto de banner o producto real de Velero -->
+            <img src="{% static 'img/collections/tienda.jpg' %}" 
+                 alt="Velero Store Collection" 
+                 class="w-full h-full object-cover grayscale contrast-125 opacity-80">
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent md:bg-gradient-to-r md:from-zinc-950 md:via-transparent"></div>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>

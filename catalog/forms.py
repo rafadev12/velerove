@@ -24,49 +24,15 @@ class ProductForm(forms.ModelForm):
             "price",
             "compare_price",
             "stock",
-            "image",
+            "image",  # <--- De vuelta aquí
         ]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
-            "slug": forms.TextInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
-            "category": forms.Select(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
-            "description": forms.Textarea(
-                attrs={
-                    "rows": 4,
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors",
-                }
-            ),
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
-            "compare_price": forms.NumberInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors",
-                    "placeholder": "Opcional (Ej: 45.00)"
-                }
-            ),  # <--- WIDGET PARA EL PRECIO ANTERIOR
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
-            "image": forms.ClearableFileInput(
-                attrs={
-                    "class": "w-full bg-zinc-950 border border-zinc-800 text-zinc-400 p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"
-                }
-            ),
+            "name": forms.TextInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "slug": forms.TextInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "category": forms.Select(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "description": forms.Textarea(attrs={"rows": 4, "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "price": forms.NumberInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "compare_price": forms.NumberInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors", "placeholder": "Opcional (Ej: 45.00)"}),
+            "stock": forms.NumberInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
+            "image": forms.ClearableFileInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-zinc-400 p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
         }
