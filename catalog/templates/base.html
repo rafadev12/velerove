@@ -321,13 +321,13 @@ style="display: none;"
         </div>
 
         <!-- Lado Derecho: Imagen Estilizada de la Marca -->
-        <div class="w-full md:w-1/2 relative aspect-[4/3] md:aspect-auto bg-zinc-900 overflow-hidden">
-            <!-- Puedes cambiar esta URL por una foto de banner o producto real de Velero -->
-            <img src="{% static 'img/collections/tienda.jpg' %}" 
-                 alt="Velero Store Collection" 
-                 class="w-full h-full object-cover grayscale contrast-125 opacity-80">
-            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent md:bg-gradient-to-r md:from-zinc-950 md:via-transparent"></div>
-        </div>
+<div class="w-full md:w-1/2 relative aspect-[4/3] md:aspect-auto bg-zinc-900 overflow-hidden">
+    {% load static %}
+    <img src="{% static 'img/collections/tienda.jpg' %}" 
+         alt="Velero Store Collection" 
+         class="w-full h-full object-cover grayscale contrast-125 opacity-80">
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent md:bg-gradient-to-r md:from-zinc-950 md:via-transparent"></div>
+</div>
 
     </div>
 </div>
