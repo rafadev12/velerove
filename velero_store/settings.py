@@ -71,16 +71,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'velero_store.wsgi.application'
 
 # ==========================================
-# DATABASE (SQLite en local / Postgres en Render)
+# DATABASE (Postgres en Render / SQLite en local)
 # ==========================================
-if 'RENDER' in os.environ:
-    DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
-else:
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
+
+# Si por alguna razón no hay DATABASE_URL en local, usa SQLite
+if not DATABASES['default']:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
