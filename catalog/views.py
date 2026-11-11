@@ -45,17 +45,27 @@ def subscribe_newsletter(request):
 
 
 # ==========================================
-# CATÁLOGO DE PRODUCTOS (UNIFICADO)
+# CATÁLOGO DE PRODUCTOS (UNIFICADO Y BLINDADO)
 # ==========================================
 
 def product_list(request):
     selected_category = request.GET.get('category')
     categories = Category.objects.all()
     
-    if selected_category and selected_category != 'all':
-        products = Product.objects.filter(category__slug=selected_category).select_related('category')
-    else:
-        products = Product.objects.all().select_related('category')
+    try:
+        if selected_category and selected_category != 'all':
+            products = Product.objects.filter(category__slug=selected_category).select_related('category')
+        else:
+            products = Product.objects.all().select_related('category')
+        
+        # Blindaje de seguridad: si la consulta por categoría llega vacía por cualquier detalle, 
+        # trae todos los productos para que la tienda nunca se quede en blanco.
+        if not products.exists() and selected_category and selected_category != 'all':
+            products = Product.objects.all().select_related('category')
+            
+    except Exception as e:
+        products = Product.objects.none()
+        print(f"Error cargando productos en vistas: {e}")
 
     context = {
         'products': products,
@@ -112,7 +122,7 @@ def cart_add(request, product_id):
             'product_id': product.id,
             'name': product.name,
             'price': str(product.price),
-            'compare_price': str(product.compare_price) if product.compare_price else None, # <--- Guardamos el precio tachado si existe
+            'compare_price': str(product.compare_price) if product.compare_price else None, 
             'quantity': quantity,
             'size': size,
         }
