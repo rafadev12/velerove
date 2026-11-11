@@ -1,8 +1,20 @@
 from django import forms
-from .models import SIZE_CHOICES, Product
+from .models import SIZE_CHOICES, Product, Category
 
 
 class ProductForm(forms.ModelForm):
+    # Selección múltiple para categorías (ej: Oversize + Recién Agregados)
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                "class": "hidden peer",
+            }
+        ),
+        required=False,
+        label="Categorías (Selecciona una o varias)",
+    )
+
     sizes = forms.MultipleChoiceField(
         choices=SIZE_CHOICES,
         widget=forms.CheckboxSelectMultiple(
@@ -19,17 +31,16 @@ class ProductForm(forms.ModelForm):
         fields = [
             "name",
             "slug",
-            "category",
+            "categories",  # <--- Actualizado al campo plural
             "description",
             "price",
             "compare_price",
             "stock",
-            "image",  # <--- De vuelta aquí
+            "image",
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
             "slug": forms.TextInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
-            "category": forms.Select(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
             "description": forms.Textarea(attrs={"rows": 4, "class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
             "price": forms.NumberInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors"}),
             "compare_price": forms.NumberInput(attrs={"class": "w-full bg-zinc-950 border border-zinc-800 text-white p-3 font-mono text-xs focus:border-white focus:outline-none transition-colors", "placeholder": "Opcional (Ej: 45.00)"}),

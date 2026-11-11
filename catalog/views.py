@@ -54,14 +54,14 @@ def product_list(request):
     
     try:
         if selected_category and selected_category != 'all':
-            products = Product.objects.filter(category__slug=selected_category).select_related('category')
+            # Filtrado adaptado al ManyToManyField (categories)
+            products = Product.objects.filter(categories__slug=selected_category).prefetch_related('categories').distinct()
         else:
-            products = Product.objects.all().select_related('category')
+            products = Product.objects.all().prefetch_related('categories')
         
-        # Blindaje de seguridad: si la consulta por categoría llega vacía por cualquier detalle, 
-        # trae todos los productos para que la tienda nunca se quede en blanco.
+        # Blindaje de seguridad: si la consulta por categoría llega vacía, trae todo para que no quede en blanco
         if not products.exists() and selected_category and selected_category != 'all':
-            products = Product.objects.all().select_related('category')
+            products = Product.objects.all().prefetch_related('categories')
             
     except Exception as e:
         products = Product.objects.none()
@@ -78,26 +78,25 @@ def product_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     
-    # Variantes de color: Toma todos los productos de la misma categoría (excluyendo el actual)
+    # Obtenemos las categorías del producto actual para buscar relaciones
+    product_categories = product.categories.all()
+
+    # Variantes de color: Productos que compartan al menos una categoría (excluyendo el actual)
     color_variants = Product.objects.filter(
-        category=product.category
-    ).exclude(id=product.id)[:5]
+        categories__in=product_categories
+    ).exclude(id=product.id).distinct()[:5]
 
     # Productos Relacionados generales
     related_products = Product.objects.filter(
-        category=product.category
-    ).exclude(id=product.id).order_by('?')[:4]
-
-    # Lógica de Tallas
-    raw_sizes = list(product.sizes) if product.sizes else ['TU']
-    is_single_size = 'TU' in raw_sizes or len(raw_sizes) == 0
+        categories__in=product_categories
+    ).exclude(id=product.id).distinct().order_by('?')[:4]
 
     context = {
         'product': product,
         'related_colors': color_variants,  
         'related_products': related_products,
-        'sizes': raw_sizes,
-        'is_single_size': is_single_size,
+        'sizes': product.sizes, # MultiSelectField maneja la lista directamente
+        'is_single_size': 'TU' in product.sizes or len(product.sizes) == 0,
     }
     return render(request, 'catalog/product_detail.html', context)
 
@@ -229,10 +228,7 @@ def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save(commit=False)
-            selected_sizes = form.cleaned_data.get("sizes", [])
-            product.sizes = ",".join(selected_sizes)
-            product.save()
+            form.save() # El ModelForm guarda automáticamente las relaciones ManyToMany
             return redirect("product_list")
     else:
         form = ProductForm()
