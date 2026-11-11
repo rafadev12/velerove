@@ -78,22 +78,23 @@ def product_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     
-    # Obtenemos las categorías de la prenda actual
+    # Obtenemos las categorías del producto actual
     product_categories = product.categories.all()
 
-    # Excluimos etiquetas comerciales (como promociones o recién agregados) 
-    # para que las miniaturas y relacionados muestren exclusivamente prendas de su categoría principal (ej. Oversize, T-Shirts)
+    # Filtramos para aislar la categoría principal de diseño y evitar que etiquetas
+    # de marketing (como promociones o recién agregados) mezclen prendas de tipos distintos.
     main_categories = product_categories.exclude(slug__in=['promociones', 'recien-agregados', 'nuestras-promociones'])
 
+    # Si la prenda solo tuviera etiquetas comerciales, usamos todas sus categorías como respaldo
     if not main_categories.exists():
         main_categories = product_categories
 
-    # Variantes de color: Productos que compartan la categoría principal de diseño
+    # Variantes de color: Productos que compartan la categoría principal de diseño (excluyendo el actual)
     color_variants = Product.objects.filter(
         categories__in=main_categories
     ).exclude(id=product.id).distinct()[:5]
 
-    # Productos Relacionados generales de la misma categoría de diseño
+    # Productos Relacionados generales basados en la categoría principal de diseño
     related_products = Product.objects.filter(
         categories__in=main_categories
     ).exclude(id=product.id).distinct().order_by('?')[:4]
@@ -102,7 +103,7 @@ def product_detail(request, slug):
         'product': product,
         'related_colors': color_variants,  
         'related_products': related_products,
-        'sizes': product.sizes, 
+        'sizes': product.sizes, # MultiSelectField maneja la lista directamente
         'is_single_size': 'TU' in product.sizes or len(product.sizes) == 0,
     }
     return render(request, 'catalog/product_detail.html', context)
@@ -235,7 +236,7 @@ def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save() 
+            form.save() # El ModelForm guarda automáticamente las relaciones ManyToMany
             return redirect("product_list")
     else:
         form = ProductForm()
