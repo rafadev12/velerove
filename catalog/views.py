@@ -184,9 +184,9 @@ def checkout(request):
         # 2. Calcular costo de envío según la selección
         shipping_cost = 0.0
         if shipping_method == 'Delivery Lechería':
-            shipping_cost = 2.0
-        elif shipping_method == 'Delivery Nueva Barcelona':
             shipping_cost = 3.0
+        elif shipping_method == 'Delivery Nueva Barcelona':
+            shipping_cost = 2.0
         elif shipping_method in ['Delivery Barcelona', 'Delivery Puerto la Cruz']:
             shipping_cost = 4.0
             
@@ -236,7 +236,7 @@ def checkout(request):
 
         # Agregar instrucciones de pago según el método
         if payment_method == 'Binance':
-             message_lines.append("Por favor envíe su comprobante de pago Binance (Correo: tu_correo@binance.com).")
+             message_lines.append("Por favor envíe su comprobante de pago Binance (Correo: fredojvl@gmail.com).")
         elif payment_method == 'Pago Móvil':
              message_lines.append("Quedo a la espera de su capture de Pago Móvil.")
 
