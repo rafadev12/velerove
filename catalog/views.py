@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
-
+from django.urls import reverse
 from .models import Product, Category, Subscriber, get_bcv_rate
 from .forms import ProductForm
 
@@ -128,6 +128,7 @@ def cart_add(request, product_id):
         cart[item_key] = {
             'product_id': product.id,
             'name': product.name,
+            'slug': product.slug, # <--- Agregado para links futuros si es necesario
             'price': str(product.price),
             'compare_price': str(product.compare_price) if product.compare_price else None, 
             'quantity': quantity,
@@ -176,26 +177,39 @@ def checkout(request):
     bcv_rate = get_bcv_rate()  # Tasa Oficial BCV actual
     total_ves = subtotal_usd * bcv_rate
 
+    # Obtenemos el dominio principal para construir la URL completa (ej: https://velerove.com)
+    base_url = request.build_absolute_uri('/')[:-1]
+
     message_lines = [
         "🛒 *NUEVA ORDEN DE COMPRA - VELERO*",
         "------------------------------------",
         "*DETALLE DEL PEDIDO:*",
     ]
 
-    # Cargar todos los productos de una sola consulta para evitar N+1 queries
+    # Extraemos los objetos reales de la base de datos
     product_ids = [item['product_id'] for item in cart.values() if 'product_id' in item]
-    products_db = {p.id: p.name for p in Product.objects.filter(id__in=product_ids)}
+    products_db = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
 
     for item_key, item in cart.items():
-        product_name = item.get('name') or item.get('product_name') or item.get('nombre')
-        if not product_name and 'product_id' in item:
-            product_name = products_db.get(item['product_id'], "Producto")
+        db_product = products_db.get(item.get('product_id'))
+        
+        product_name = item.get('name') or item.get('product_name') or "Producto"
+        if not product_name and db_product:
+            product_name = db_product.name
 
         price = item.get('price', 0)
         quantity = item.get('quantity', 1)
         size_display = "Talla Única" if item.get('size') == 'TU' else item.get('size', 'N/A')
         
-        line = f"• *{product_name}*\n  Talla: {size_display} | Cantidad: {quantity} | Precio: ${price} USD"
+        # Generamos el enlace oficial hacia la página del producto
+        product_link = ""
+        if db_product:
+            # Creamos la ruta (ej: /producto/remera-oversize/) y la unimos al dominio
+            path = reverse('product_detail', kwargs={'slug': db_product.slug})
+            product_url = f"{base_url}{path}"
+            product_link = f"\n  🔗 Ver en tienda: {product_url}"
+        
+        line = f"• *{product_name}*\n  Talla: {size_display} | Cantidad: {quantity} | Precio: ${price} USD{product_link}"
         message_lines.append(line)
 
     message_lines.extend([
