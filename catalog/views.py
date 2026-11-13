@@ -174,67 +174,90 @@ def checkout(request):
         return redirect('product_list')
         
     subtotal_usd = sum(float(item.get('price', 0)) * int(item.get('quantity', 1)) for item in cart.values())
-    bcv_rate = get_bcv_rate()  # Tasa Oficial BCV actual
+    bcv_rate = get_bcv_rate()
+
+    if request.method == 'POST':
+        # 1. Obtener datos del formulario
+        shipping_method = request.POST.get('shipping_method', 'Retiro en tienda')
+        payment_method = request.POST.get('payment_method', 'Pago Móvil')
+        
+        # 2. Calcular costo de envío según la selección
+        shipping_cost = 0.0
+        if shipping_method == 'Delivery Lechería':
+            shipping_cost = 2.0
+        elif shipping_method == 'Delivery Nueva Barcelona':
+            shipping_cost = 3.0
+        elif shipping_method in ['Delivery Barcelona', 'Delivery Puerto la Cruz']:
+            shipping_cost = 4.0
+            
+        total_usd = subtotal_usd + shipping_cost
+        total_ves = total_usd * bcv_rate
+        
+        # 3. Construir mensaje para WhatsApp
+        base_url = request.build_absolute_uri('/')[:-1]
+        message_lines = [
+            "🛒 *NUEVA ORDEN DE COMPRA - VELERO*",
+            "------------------------------------",
+            "*DETALLE DEL PEDIDO:*",
+        ]
+
+        product_ids = [item['product_id'] for item in cart.values() if 'product_id' in item]
+        products_db = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
+
+        for item_key, item in cart.items():
+            db_product = products_db.get(item.get('product_id'))
+            product_name = item.get('name') or item.get('product_name') or "Producto"
+            if not product_name and db_product:
+                product_name = db_product.name
+
+            price = item.get('price', 0)
+            quantity = item.get('quantity', 1)
+            size_display = "Talla Única" if item.get('size') == 'TU' else item.get('size', 'N/A')
+            
+            product_link = ""
+            if db_product:
+                path = reverse('product_detail', kwargs={'slug': db_product.slug})
+                product_url = f"{base_url}{path}"
+                product_link = f"\n  🔗 Ver en tienda: {product_url}"
+            
+            line = f"• *{product_name}*\n  Talla: {size_display} | Cantidad: {quantity} | Precio: ${price} USD{product_link}"
+            message_lines.append(line)
+
+        message_lines.extend([
+            "------------------------------------",
+            f"📦 *Envío:* {shipping_method} (${shipping_cost:.2f})",
+            f"💳 *Método de Pago:* {payment_method}",
+            "------------------------------------",
+            f"💵 *Total USD:* ${total_usd:.2f}",
+            f"🇻🇪 *Tasa BCV:* {bcv_rate:.2f} Bs/USD",
+            f"💰 *TOTAL VES:* {total_ves:,.2f} Bs",
+            "------------------------------------",
+        ])
+
+        # Agregar instrucciones de pago según el método
+        if payment_method == 'Binance':
+             message_lines.append("Por favor envíe su comprobante de pago Binance (Correo: tu_correo@binance.com).")
+        elif payment_method == 'Pago Móvil':
+             message_lines.append("Quedo a la espera de su capture de Pago Móvil.")
+
+        raw_message = "\n".join(message_lines)
+        encoded_message = urllib.parse.quote(raw_message)
+
+        whatsapp_phone = "584221143302"
+        whatsapp_url = f"https://api.whatsapp.com/send?phone={whatsapp_phone}&text={encoded_message}"
+        
+        # Redirigir directamente al link de WhatsApp
+        return redirect(whatsapp_url)
+
+    # Si es GET, renderizamos la página del carrito/checkout normal
     total_ves = subtotal_usd * bcv_rate
-
-    # Obtenemos el dominio principal para construir la URL completa (ej: https://velerove.com)
-    base_url = request.build_absolute_uri('/')[:-1]
-
-    message_lines = [
-        "🛒 *NUEVA ORDEN DE COMPRA - VELERO*",
-        "------------------------------------",
-        "*DETALLE DEL PEDIDO:*",
-    ]
-
-    # Extraemos los objetos reales de la base de datos
-    product_ids = [item['product_id'] for item in cart.values() if 'product_id' in item]
-    products_db = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
-
-    for item_key, item in cart.items():
-        db_product = products_db.get(item.get('product_id'))
-        
-        product_name = item.get('name') or item.get('product_name') or "Producto"
-        if not product_name and db_product:
-            product_name = db_product.name
-
-        price = item.get('price', 0)
-        quantity = item.get('quantity', 1)
-        size_display = "Talla Única" if item.get('size') == 'TU' else item.get('size', 'N/A')
-        
-        # Generamos el enlace oficial hacia la página del producto
-        product_link = ""
-        if db_product:
-            # Creamos la ruta (ej: /producto/remera-oversize/) y la unimos al dominio
-            path = reverse('product_detail', kwargs={'slug': db_product.slug})
-            product_url = f"{base_url}{path}"
-            product_link = f"\n  🔗 Ver en tienda: {product_url}"
-        
-        line = f"• *{product_name}*\n  Talla: {size_display} | Cantidad: {quantity} | Precio: ${price} USD{product_link}"
-        message_lines.append(line)
-
-    message_lines.extend([
-        "------------------------------------",
-        f"💵 *Subtotal USD:* ${subtotal_usd:.2f}",
-        f"🇻🇪 *Tasa BCV:* {bcv_rate:.2f} Bs/USD",
-        f"💳 *TOTAL VES:* {total_ves:,.2f} Bs",
-        "------------------------------------",
-        "Quedo a la espera de los datos de pago para realizar la transferencia / Pago Móvil."
-    ])
-
-    raw_message = "\n".join(message_lines)
-    encoded_message = urllib.parse.quote(raw_message)
-
-    whatsapp_phone = "584221143302"  # Número de WhatsApp de VELERO
-    whatsapp_url = f"https://api.whatsapp.com/send?phone={whatsapp_phone}&text={encoded_message}"
-
     context = {
         'cart': cart,
         'subtotal_usd': subtotal_usd,
         'bcv_rate': bcv_rate,
         'total_ves': total_ves,
-        'whatsapp_url': whatsapp_url,
     }
-    return render(request, 'catalog/checkout.html', context)
+    return render(request, 'catalog/cart_detail.html', context)
 
 
 # ==========================================

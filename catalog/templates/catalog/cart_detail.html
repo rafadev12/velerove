@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <!-- Tarjeta de Resumen -->
+        <!-- Tarjeta de Resumen y Formulario de Pago/Envío -->
         <div class="bg-zinc-950 border border-zinc-900 p-6 space-y-6 h-fit">
             <h2 class="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 border-b border-zinc-900 pb-3">
                 Resumen del Pedido
@@ -58,12 +58,97 @@
                 </div>
             </div>
 
-            <a href="{% url 'checkout' %}" class="block text-center bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs uppercase tracking-widest py-3.5 font-bold transition-all">
-                Completar Pedido Vía WhatsApp
-            </a>
-            <p class="text-[10px] text-zinc-500 text-center font-mono uppercase tracking-wider">
-                Procesamiento directo e inmediato
-            </p>
+            <!-- FORMULARIO DE CHECKOUT -->
+            <form action="{% url 'checkout' %}" method="POST" class="space-y-8 pt-4 border-t border-zinc-900">
+                {% csrf_token %}
+                
+                <!-- SECCIÓN: MÉTODOS DE ENVÍO -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-mono uppercase tracking-widest text-white mb-3">Método de Envío</h3>
+                    
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Retiro en tienda" checked class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Retiro en showroom</span>
+                            <span class="text-emerald-400 font-mono text-[10px]">GRATIS - Listo en 1 hora</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Envío Nacional MRW/ZOOM" class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Envío Nacional MRW o ZOOM</span>
+                            <span class="text-zinc-500 font-mono text-[10px]">Cobro a destino (Sujeto a peso)</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Delivery Lechería" class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Delivery Lechería</span>
+                            <span class="text-zinc-500 font-mono text-[10px]">$2.00 USD</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Delivery Nueva Barcelona" class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Delivery Nueva Barcelona</span>
+                            <span class="text-zinc-500 font-mono text-[10px]">$3.00 USD</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Delivery Barcelona" class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Delivery Barcelona</span>
+                            <span class="text-zinc-500 font-mono text-[10px]">$4.00 USD</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <input type="radio" name="shipping_method" value="Delivery Puerto la Cruz" class="mt-1 form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <div class="flex flex-col">
+                            <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Delivery Puerto la Cruz</span>
+                            <span class="text-zinc-500 font-mono text-[10px]">A partir de Casas Bote A - $4.00 USD</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- SECCIÓN: MÉTODOS DE PAGO -->
+                <div class="space-y-3 pt-4 border-t border-zinc-900">
+                    <h3 class="text-xs font-mono uppercase tracking-widest text-white mb-3">Método de Pago</h3>
+                    
+                    <label class="flex items-center space-x-3 cursor-pointer group">
+                        <input type="radio" name="payment_method" value="Binance" class="form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Binance (USDT)</span>
+                    </label>
+                    
+                    <label class="flex items-center space-x-3 cursor-pointer group">
+                        <input type="radio" name="payment_method" value="Pago Móvil" checked class="form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Pago Móvil (Bs)</span>
+                    </label>
+
+                    <label class="flex items-center space-x-3 cursor-pointer group">
+                        <input type="radio" name="payment_method" value="Efectivo" class="form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Efectivo ($)</span>
+                    </label>
+
+                    <label class="flex items-center space-x-3 cursor-pointer group">
+                        <input type="radio" name="payment_method" value="Zinli" class="form-radio text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                        <span class="text-zinc-300 font-mono text-xs group-hover:text-white transition-colors">Zinli</span>
+                    </label>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full block text-center bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs uppercase tracking-widest py-3.5 font-bold transition-all">
+                        Completar Pedido Vía WhatsApp
+                    </button>
+                    <p class="text-[10px] text-zinc-500 text-center font-mono uppercase tracking-wider mt-3">
+                        Serás redirigido para enviar los datos
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 
