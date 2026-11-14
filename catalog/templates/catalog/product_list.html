@@ -3,6 +3,26 @@
 
 {% block content %}
 
+
+<!-- ESTILO CSS PARA LA ANIMACIÓN INFINITA -->
+<style>
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 25s linear infinite;
+}
+
+/* Pausar el movimiento si el usuario pasa el mouse por encima (detalle profesional) */
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+</style>
+
 <!-- HERO / PORTADA PRINCIPAL -->
 <section class="relative w-full h-screen overflow-hidden bg-zinc-950 text-white select-none">
     
@@ -60,6 +80,30 @@
 </section>
 
 <!-- SECCIÓN DE COLECCIONES -->
+<!-- TIRA GIRATORIA / TICKER PROMO 10% -->
+<div class="relative w-full bg-zinc-950 border-y border-zinc-800 text-zinc-300 font-mono text-xs uppercase tracking-[0.25em] overflow-hidden py-2.5 select-none z-50">
+    <div class="flex whitespace-nowrap animate-marquee">
+        <!-- Bloque 1 de texto -->
+        <div class="flex items-center space-x-8 mx-4">
+            <span>🔥 10% DE DESCUENTO EN TODO EL CATÁLOGO</span>
+            <span class="text-emerald-500">★</span>
+            <span>ENVÍOS A TODA LA ZONA METROPOLITANA</span>
+            <span class="text-emerald-500">★</span>
+            <span>¡APROVECHA TU OUTFIT VELERO HOY!</span>
+            <span class="text-emerald-500">★</span>
+        </div>
+        <!-- Bloque 2 duplicado para que el loop sea infinito y fluido sin espacios vacíos -->
+        <div class="flex items-center space-x-8 mx-4" aria-hidden="true">
+            <span>🔥 10% DE DESCUENTO EN TODO EL CATÁLOGO</span>
+            <span class="text-emerald-500">★</span>
+            <span>ENVÍOS A TODA LA ZONA METROPOLITANA</span>
+            <span class="text-emerald-500">★</span>
+            <span>¡APROVECHA TU OUTFIT VELERO HOY!</span>
+            <span class="text-emerald-500">★</span>
+        </div>
+    </div>
+</div>
+
 <section id="colecciones" class="py-16 bg-zinc-950/50 border-b border-zinc-900">
     <div class="max-w-7xl mx-auto px-6 mb-8 text-center">
         <h2 class="text-3xl font-black uppercase tracking-tight text-white">Nuestras Colecciones</h2>
@@ -468,9 +512,35 @@
     </div>
     {% endif %}
 
+    
+
 </section>
 
 <!-- HERO / PORTADA ESTILO ASRV -->
+
+<!-- TIRA GIRATORIA / TICKER PROMO 10% -->
+<div class="relative w-full bg-zinc-950 border-y border-zinc-800 text-zinc-300 font-mono text-xs uppercase tracking-[0.25em] overflow-hidden py-2.5 select-none z-50">
+    <div class="flex whitespace-nowrap animate-marquee">
+        <!-- Bloque 1 de texto -->
+        <div class="flex items-center space-x-8 mx-4">
+            <span>🔥 10% DE DESCUENTO EN TODO EL CATÁLOGO</span>
+            <span class="text-emerald-500">★</span>
+            <span>ENVÍOS A TODA LA ZONA METROPOLITANA</span>
+            <span class="text-emerald-500">★</span>
+            <span>¡APROVECHA TU OUTFIT VELERO HOY!</span>
+            <span class="text-emerald-500">★</span>
+        </div>
+        <!-- Bloque 2 duplicado para que el loop sea infinito y fluido sin espacios vacíos -->
+        <div class="flex items-center space-x-8 mx-4" aria-hidden="true">
+            <span>🔥 10% DE DESCUENTO EN TODO EL CATÁLOGO</span>
+            <span class="text-emerald-500">★</span>
+            <span>ENVÍOS A TODA LA ZONA METROPOLITANA</span>
+            <span class="text-emerald-500">★</span>
+            <span>¡APROVECHA TU OUTFIT VELERO HOY!</span>
+            <span class="text-emerald-500">★</span>
+        </div>
+    </div>
+</div>
 <section class="relative w-full h-screen overflow-hidden bg-zinc-950 text-white select-none">
     <img src="{% static 'img/collections/banner.jpg' %}" 
          alt="VELERO Apparel" 

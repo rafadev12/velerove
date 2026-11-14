@@ -32,17 +32,112 @@
 
 
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col selection:bg-white selection:text-black">
+<!-- PRELOADER VLRO - NAVEGACIÓN Y DESLIZAMIENTO SUPERIOR -->
+<div id="preloader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-transform duration-700 ease-in-out select-none">
+    
+    <div class="relative flex flex-col items-center space-y-8 w-72">
+        
+        <!-- LOGO Y VELERO ANIMADO (NAVEGANDO) -->
+        <div class="flex flex-col items-center space-y-5">
+            
+            <!-- Barquito con animación de balanceo náutico -->
+            <div class="w-20 h-20 text-zinc-900 flex items-center justify-center animate-sail">
+                <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Casco de la embarcación -->
+                    <path d="M2.5 19h19l-3-5h-13l-3 5z"></path>
+                    <!-- Mástil -->
+                    <path d="M12 3v11"></path>
+                    <!-- Vela principal -->
+                    <path d="M12 4c4.5 1 7 4.5 7 10 0 0-4.5-1.5-7-1.5"></path>
+                    <!-- Vela secundaria -->
+                    <path d="M12 6c-3 1.5-4.5 4.5-4.5 8 0 0 2.5-1 4.5-1"></path>
+                </svg>
+            </div>
 
-    <!-- Preloader -->
-    <div id="loader" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-700 pointer-events-none">
-        <div class="relative flex flex-col items-center">
-            <h1 class="text-4xl md:text-6xl font-black tracking-[0.3em] uppercase animate-pulse">VLRO</h1>
-            <p class="text-xs text-zinc-500 tracking-[0.5em] mt-2 font-mono uppercase">VELERO</p>
-            <div class="w-16 h-[2px] bg-zinc-800 mt-6 overflow-hidden">
-                <div class="w-full h-full bg-white animate-[ping_1.5s_infinite]"></div>
+            <!-- Logotipo VLRO -->
+            <h1 class="font-sans font-black text-3xl tracking-[0.35em] text-zinc-900">
+                VLRO
+            </h1>
+        </div>
+
+        <!-- BARRA DE CARGA TIPO OLA -->
+        <div class="flex flex-col items-center space-y-3 w-full">
+            <div class="w-full h-2 bg-zinc-100 rounded-full overflow-hidden relative border border-zinc-200 shadow-inner">
+                <div id="preloader-bar" class="absolute top-0 left-0 h-full bg-zinc-900 rounded-full w-0 transition-all duration-200 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-wave"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-between w-full font-mono text-[11px] uppercase tracking-widest text-zinc-400 px-1">
+                <span class="text-zinc-500">Navegando</span>
+                <span id="preloader-percentage" class="text-zinc-900 font-bold">0%</span>
             </div>
         </div>
+
     </div>
+</div>
+
+<!-- ESTILOS DE ANIMACIÓN (BALANCEO Y OLA) -->
+<style>
+@keyframes sail {
+    0% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-4px) rotate(-3deg); }
+    50% { transform: translateY(0px) rotate(0deg); }
+    75% { transform: translateY(-4px) rotate(3deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-sail {
+    animation: sail 3s ease-in-out infinite;
+}
+
+@keyframes wave-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.animate-wave {
+    animation: wave-shine 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>
+
+<!-- SCRIPT DE CONTROL Y TRANSICIÓN HACIA ARRIBA -->
+<!-- SCRIPT DE CONTROL - DURACIÓN EXACTA DE 3 SEGUNDOS -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const preloader = document.getElementById("preloader");
+    const bar = document.getElementById("preloader-bar");
+    const percentage = document.getElementById("preloader-percentage");
+    
+    let startTime = performance.now();
+    const duration = 2000; // 2000 milisegundos = exactamente 2 segundos
+
+    function updatePreloader(currentTime) {
+        let elapsed = currentTime - startTime;
+        let progress = Math.min(elapsed / duration, 1); // Calcula el porcentaje de 0 a 1
+        
+        let currentPercent = Math.floor(progress * 100);
+        
+        // Actualizamos la barra y el texto
+        bar.style.width = currentPercent + "%";
+        percentage.innerText = currentPercent + "%";
+
+        if (progress < 1) {
+            requestAnimationFrame(updatePreloader);
+        } else {
+            // Al llegar al 100% (exactamente a los 3 segundos), deslizamos hacia arriba
+            setTimeout(function() {
+                preloader.style.transform = "translateY(-100%)";
+                setTimeout(function() {
+                    preloader.style.display = "none";
+                }, 700); // Tiempo de la transición de subida
+            }, 200); // Breve pausa estetica en el 100%
+        }
+    }
+
+    requestAnimationFrame(updatePreloader);
+});
+</script>
 
     <!-- Main Content -->
     <main class="flex-grow w-full">
