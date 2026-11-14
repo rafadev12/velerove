@@ -32,111 +32,153 @@
 
 
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col selection:bg-white selection:text-black">
-<!-- PRELOADER VLRO - NAVEGACIÓN Y DESLIZAMIENTO SUPERIOR -->
-<div id="preloader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-transform duration-700 ease-in-out select-none">
+<!-- PRELOADER EDITORIAL OPTIMIZADO (60 FPS GPU) - VLRO -->
+<div id="preloader" class="hidden fixed inset-0 z-50 flex flex-col justify-between bg-white text-zinc-900 p-8 md:p-14 transition-transform duration-1000 ease-[cubic-bezier(0.76,0,0.24,1)] select-none overflow-hidden" style="will-change: transform;">
     
-    <div class="relative flex flex-col items-center space-y-8 w-72">
+    <!-- FILA SUPERIOR: CONTADOR ODÓMETRO GIGANTE + BARQUITO -->
+    <div class="w-full flex justify-between items-start">
         
-        <!-- LOGO Y VELERO ANIMADO (NAVEGANDO) -->
-        <div class="flex flex-col items-center space-y-5">
-            
-            <!-- Barquito con animación de balanceo náutico -->
-            <div class="w-20 h-20 text-zinc-900 flex items-center justify-center animate-sail">
-                <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                    <!-- Casco de la embarcación -->
+        <!-- Contador gigante sin transiciones CSS que frenen el JS -->
+        <div class="flex items-baseline font-sans font-light text-7xl sm:text-8xl md:text-9xl tracking-tighter leading-none text-zinc-900">
+            <div class="h-[1em] overflow-hidden flex">
+                <!-- Centenas -->
+                <div id="odo-hundreds" class="flex flex-col" style="transform: translate3d(0, 0%, 0); will-change: transform;">
+                    <span class="h-[1em] flex items-center opacity-0">0</span>
+                    <span class="h-[1em] flex items-center">1</span>
+                </div>
+                <!-- Decenas -->
+                <div id="odo-tens" class="flex flex-col" style="transform: translate3d(0, 0%, 0); will-change: transform;">
+                    <span class="h-[1em] flex items-center">0</span>
+                    <span class="h-[1em] flex items-center">1</span>
+                    <span class="h-[1em] flex items-center">2</span>
+                    <span class="h-[1em] flex items-center">3</span>
+                    <span class="h-[1em] flex items-center">4</span>
+                    <span class="h-[1em] flex items-center">5</span>
+                    <span class="h-[1em] flex items-center">6</span>
+                    <span class="h-[1em] flex items-center">7</span>
+                    <span class="h-[1em] flex items-center">8</span>
+                    <span class="h-[1em] flex items-center">9</span>
+                    <span class="h-[1em] flex items-center">0</span>
+                </div>
+                <!-- Unidades -->
+                <div id="odo-ones" class="flex flex-col" style="transform: translate3d(0, 0%, 0); will-change: transform;">
+                    <span class="h-[1em] flex items-center">0</span>
+                    <span class="h-[1em] flex items-center">1</span>
+                    <span class="h-[1em] flex items-center">2</span>
+                    <span class="h-[1em] flex items-center">3</span>
+                    <span class="h-[1em] flex items-center">4</span>
+                    <span class="h-[1em] flex items-center">5</span>
+                    <span class="h-[1em] flex items-center">6</span>
+                    <span class="h-[1em] flex items-center">7</span>
+                    <span class="h-[1em] flex items-center">8</span>
+                    <span class="h-[1em] flex items-center">9</span>
+                    <span class="h-[1em] flex items-center">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barquito navegando en esquina superior derecha -->
+        <div class="pt-2">
+            <div class="w-10 h-10 md:w-12 md:h-12 text-zinc-900 animate-sail" style="will-change: transform;">
+                <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M2.5 19h19l-3-5h-13l-3 5z"></path>
-                    <!-- Mástil -->
                     <path d="M12 3v11"></path>
-                    <!-- Vela principal -->
                     <path d="M12 4c4.5 1 7 4.5 7 10 0 0-4.5-1.5-7-1.5"></path>
-                    <!-- Vela secundaria -->
                     <path d="M12 6c-3 1.5-4.5 4.5-4.5 8 0 0 2.5-1 4.5-1"></path>
                 </svg>
             </div>
-
-            <!-- Logotipo VLRO -->
-            <h1 class="font-sans font-black text-3xl tracking-[0.35em] text-zinc-900">
-                VLRO
-            </h1>
         </div>
-
-        <!-- BARRA DE CARGA TIPO OLA -->
-        <div class="flex flex-col items-center space-y-3 w-full">
-            <div class="w-full h-2 bg-zinc-100 rounded-full overflow-hidden relative border border-zinc-200 shadow-inner">
-                <div id="preloader-bar" class="absolute top-0 left-0 h-full bg-zinc-900 rounded-full w-0 transition-all duration-200 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-wave"></div>
-                </div>
-            </div>
-
-            <div class="flex justify-between w-full font-mono text-[11px] uppercase tracking-widest text-zinc-400 px-1">
-                <span class="text-zinc-500">Navegando</span>
-                <span id="preloader-percentage" class="text-zinc-900 font-bold">0%</span>
-            </div>
-        </div>
-
     </div>
+
+    <!-- CENTRO: LOGOTIPO VLRO PROTAGONISTA -->
+    <div class="flex flex-col items-center justify-center my-auto">
+        <img src="{% static 'img/collections/vlro.jpg' %}" alt="VLRO Logo" class="w-64 h-64 md:w-56 md:h-56 object-contain mb-4">
+    </div>
+
+    <!-- FILA INFERIOR: ESLOGAN EDITORIAL IZQUIERDA -->
+    <div class="w-full flex justify-between items-end">
+        <div class="font-sans text-xs md:text-sm leading-relaxed text-zinc-500 tracking-wide">
+            <p class="font-medium text-zinc-900">Navegamos</p>
+            <p>Conociendo nuevos horizontes</p>
+        </div>
+        <span class="font-mono text-[10px] uppercase tracking-widest text-zinc-400">
+            Cargando catálogo
+        </span>
+    </div>
+
 </div>
 
-<!-- ESTILOS DE ANIMACIÓN (BALANCEO Y OLA) -->
 <style>
 @keyframes sail {
-    0% { transform: translateY(0px) rotate(0deg); }
-    25% { transform: translateY(-4px) rotate(-3deg); }
-    50% { transform: translateY(0px) rotate(0deg); }
-    75% { transform: translateY(-4px) rotate(3deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
+    0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg); }
+    25% { transform: translate3d(0, -3px, 0) rotate(-2.5deg); }
+    75% { transform: translate3d(0, -3px, 0) rotate(2.5deg); }
 }
 
 .animate-sail {
     animation: sail 3s ease-in-out infinite;
 }
-
-@keyframes wave-shine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-.animate-wave {
-    animation: wave-shine 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
 </style>
 
-<!-- SCRIPT DE CONTROL Y TRANSICIÓN HACIA ARRIBA -->
-<!-- SCRIPT DE CONTROL - DURACIÓN EXACTA DE 3 SEGUNDOS -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+(function() {
     const preloader = document.getElementById("preloader");
-    const bar = document.getElementById("preloader-bar");
-    const percentage = document.getElementById("preloader-percentage");
     
-    let startTime = performance.now();
-    const duration = 2000; // 2000 milisegundos = exactamente 2 segundos
+    if (sessionStorage.getItem("vlro_preloader_shown")) {
+        return;
+    }
 
-    function updatePreloader(currentTime) {
+    preloader.classList.remove("hidden");
+    document.body.style.overflow = "hidden"; // Evita cálculos de scroll mientras carga
+    sessionStorage.setItem("vlro_preloader_shown", "true");
+
+    const odoHundreds = document.getElementById("odo-hundreds");
+    const odoTens = document.getElementById("odo-tens");
+    const odoOnes = document.getElementById("odo-ones");
+    
+    let startTime = null;
+    const duration = 2600; // 2.6s de conteo + 0.4s pausa = 3s totales fluidos
+
+    function updateOdometer(currentTime) {
+        if (!startTime) startTime = currentTime;
         let elapsed = currentTime - startTime;
-        let progress = Math.min(elapsed / duration, 1); // Calcula el porcentaje de 0 a 1
+        let rawProgress = Math.min(elapsed / duration, 1);
         
-        let currentPercent = Math.floor(progress * 100);
+        // Curva suave sin saltos bruscos
+        let easedProgress = 1 - Math.pow(1 - rawProgress, 2.5);
+        let exactValue = easedProgress * 100;
         
-        // Actualizamos la barra y el texto
-        bar.style.width = currentPercent + "%";
-        percentage.innerText = currentPercent + "%";
-
-        if (progress < 1) {
-            requestAnimationFrame(updatePreloader);
+        if (exactValue < 99.5) {
+            // Movimiento continuo y sedoso usando decimales en lugar de saltos enteros
+            let tens = Math.floor(exactValue / 10);
+            let ones = exactValue % 10;
+            
+            odoHundreds.style.transform = `translate3d(0, 0%, 0)`;
+            odoTens.style.transform = `translate3d(0, -${tens * 100}%, 0)`;
+            odoOnes.style.transform = `translate3d(0, -${ones * 100}%, 0)`;
         } else {
-            // Al llegar al 100% (exactamente a los 3 segundos), deslizamos hacia arriba
+            // Clava el 100 al final
+            odoHundreds.style.transform = `translate3d(0, -100%, 0)`;
+            odoTens.style.transform = `translate3d(0, -1000%, 0)`;
+            odoOnes.style.transform = `translate3d(0, -1000%, 0)`;
+        }
+
+        if (rawProgress < 1) {
+            requestAnimationFrame(updateOdometer);
+        } else {
             setTimeout(function() {
-                preloader.style.transform = "translateY(-100%)";
+                document.body.style.overflow = ""; // Restaura el scroll
+                preloader.style.transform = "translate3d(0, -100%, 0)";
                 setTimeout(function() {
-                    preloader.style.display = "none";
-                }, 700); // Tiempo de la transición de subida
-            }, 200); // Breve pausa estetica en el 100%
+                    preloader.classList.add("hidden");
+                }, 1000);
+            }, 350);
         }
     }
 
-    requestAnimationFrame(updatePreloader);
-});
+    // Esperamos 2 frames iniciales para que el navegador termine de pintar el HTML base antes de arrancar
+    requestAnimationFrame(() => requestAnimationFrame(updateOdometer));
+})();
 </script>
 
     <!-- Main Content -->
@@ -359,27 +401,33 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 </script>
+<!-- CONTENEDOR PADRE CON ALPINE.JS SINCRONIZADO -->
+<div x-data="{ open: false }"
+     x-init="
+        if (!sessionStorage.getItem('vlro_promo_shown')) {
+            // Si el preloader acaba de correr, espera 5.5s (4s de animación + 1.5s viendo la tienda).
+            // Si ya había entrado en la sesión, espera 2s.
+            const isFirstVisit = !sessionStorage.getItem('vlro_promo_delay_checked');
+            sessionStorage.setItem('vlro_promo_delay_checked', 'true');
+            const delay = isFirstVisit ? 5500 : 2000;
 
-<!-- Modal Promocional de VELERO -->
-<div x-data="{ 
-    open: false,
-    init() {
-        // Mostrar el modal a los 2 segundos de entrar a la web (solo una vez por sesión)
-        if (!sessionStorage.getItem('velero_modal_shown')) {
             setTimeout(() => {
-                this.open = true;
-                sessionStorage.setItem('velero_modal_shown', 'true');
-            }, 2000);
+                open = true;
+                sessionStorage.setItem('vlro_promo_shown', 'true');
+            }, delay);
         }
-    }
-}" 
-x-show="open" 
-x-transition.opacity.duration.300ms
-class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-style="display: none;"
-@keydown.escape.window="open = false">
+     "
+     x-show="open"
+     x-transition:enter="transition ease-out duration-500"
+     x-transition:enter-start="opacity-0 scale-95"
+     x-transition:enter-end="opacity-100 scale-100"
+     x-transition:leave="transition ease-in duration-300"
+     x-transition:leave-start="opacity-100 scale-100"
+     x-transition:leave-end="opacity-0 scale-95"
+     style="display: none;"
+     class="fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 select-none">
 
-    <!-- Contenedor del Modal -->
+    <!-- Contenedor del Modal (Tu diseño intacto) -->
     <div @click.away="open = false" class="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-lg overflow-hidden shadow-2xl flex flex-col md:flex-row">
         
         <!-- Botón de Cerrar (X) -->
@@ -415,7 +463,7 @@ style="display: none;"
             </div>
         </div>
 
-                <!-- Lado Derecho: Imagen Estilizada de la Marca -->
+        <!-- Lado Derecho: Imagen Estilizada de la Marca -->
         <div class="w-full md:w-1/2 relative aspect-[4/3] md:aspect-auto bg-zinc-900 overflow-hidden">
             {% load static %}
             <img src="{% static 'img/collections/tienda.jpg' %}" 
@@ -425,6 +473,7 @@ style="display: none;"
         </div>
 
     </div>
+</div>
 </div>
 </body>
 </html>
