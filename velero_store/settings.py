@@ -111,9 +111,17 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Activar WhiteNoise para estáticos en producción
+# Activar WhiteNoise para estáticos en producción (sin compresión para permitir streaming de video)
 if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.ManifestStaticFilesStorage",
+        },
+    }
+    STATICFILES_STORAGE = 'whitenoise.storage.ManifestStaticFilesStorage'
 
 # Configuración multimedia: Ruta absoluta al disco persistente en Render (/app/media)
 MEDIA_URL = '/media/'
