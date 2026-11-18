@@ -9,8 +9,11 @@ urlpatterns = [
     path('', include('catalog.urls')),
 ]
 
-# Forzar que Django sirva los archivos multimedia (tanto en local como en producción en Render)
+# Ruta dedicada para el video del preloader (evita que WhiteNoise bloquee el streaming)
 urlpatterns += [
+    re_path(r'^video-intro/(?P<path>.*)$', serve, {
+        'document_root': settings.BASE_DIR / 'static' / 'img' / 'collections',
+    }),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
