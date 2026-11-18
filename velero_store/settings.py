@@ -73,8 +73,6 @@ WSGI_APPLICATION = 'velero_store.wsgi.application'
 # ==========================================
 # DATABASE (Postgres en Render / SQLite en local)
 # ==========================================
-import dj_database_url
-
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
@@ -111,17 +109,16 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Activar WhiteNoise para estáticos en producción (sin compresión para permitir streaming de video)
+# WhiteNoise sin compresión ni manifest estricto para evitar Error 500 y permitir streaming de video
 if not DEBUG:
     STORAGES = {
         "default": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.ManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.StaticFilesStorage",
         },
     }
-    STATICFILES_STORAGE = 'whitenoise.storage.ManifestStaticFilesStorage'
 
 # Configuración multimedia: Ruta absoluta al disco persistente en Render (/app/media)
 MEDIA_URL = '/media/'
