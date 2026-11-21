@@ -47,7 +47,7 @@ def get_bcv_rate():
 
 SIZE_CHOICES = (
     ('TU', 'Talla Única'),
-    ('SM', 'SM'),
+    ('XS', 'XS'),
     ('S', 'S'),
     ('M', 'M'),
     ('L', 'L'),
@@ -100,7 +100,7 @@ class Product(models.Model):
     # Recuperamos la imagen principal opcional
     image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name="Imagen Principal (Opcional)")
     sizes = MultiSelectField(
-        choices=SIZE_CHOICES, default=['S', 'M', 'L', 'XL']
+        choices=SIZE_CHOICES, default=['XS', 'S', 'M', 'L', 'XL']
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
